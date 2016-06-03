@@ -1,0 +1,23 @@
+.c-schedule{
+  margin: 1em;
+  padding: .5em;
+  background-color: #efefef;
+  display: flex;
+}
+
+.c-schedule-type{
+  padding-right: .5em;
+  border-right: 1px solid #666;
+  min-width: 85px;
+}
+
+.c-schedule-options{
+  padding-left: .5em;
+}
+
+ul{
+  list-style-type: none;
+  padding-left: 0;
+}
+
+/* markup still needs some work */

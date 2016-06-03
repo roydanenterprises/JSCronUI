@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Standalone jsCronUI demo</title>
+
+    <link rel="stylesheet" type="text/css" href="../src/jsCronUI.css"/>
+    <link rel="stylesheet" type="text/css" href="../node_modules/multiple-select/multiple-select.css" />
+    <script src="https://code.jquery.com/jquery-2.2.2.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
+
+    <!-- source files -->
+    <script src="../src/jsCronUI.js"></script>
+    <script src="../node_modules/multiple-select/multiple-select.js"></script>
+  </head>
+  <body>
+    <h1>jsCronUI</h1>
+    <h3>Init Schedule Before Doing Anything. This proves nothing is wired to document.ready</h3>
+    <button class="init">Okay already, PUNCH IT!</button>  Debug <input type="text" id="debug" readonly/> <button class="read">Read Cron</button>
+
+    <div id="Schedule" class="c-schedule"></div>
+
+  <script>
+
+      $(function(){
+
+        var $s = $('#Schedule');
+
+        function updateDebug(){
+          $('#debug').val($s.jsCronUIGetInstance().getCron());
+       }
+
+        $('.init').on('click', function(){
+          $s.jsCronUI();
+          updateDebug();
+        });
+
+        $('.read').on('click', function(){
+          updateDebug();
+        });
+
+      });
+
+    </script>
+
+  </body>
+</html>

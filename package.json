@@ -1,0 +1,23 @@
+{
+  "name": "jqcron",
+  "version": "0.1.0",
+  "description": "This is a forked version of arnapou's jQuery plugin, supporting quartz expressions",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bmuenzenmeyer/jqcron.git"
+  },
+  "author": "ROYDAN Enterprises, Ltd.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bmuenzenmeyer/jqcron/issues"
+  },
+  "homepage": "https://github.com/bmuenzenmeyer/jqcron#readme",
+  "devDependencies": {
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.22",
+    "karma-cli": "^0.1.2",
+    "karma-firefox-launcher": "^0.1.7",
+    "karma-jasmine": "^0.3.8",
+    "multiple-select": "^1.2.0"
+  }
+}
