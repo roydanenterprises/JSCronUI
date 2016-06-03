@@ -18,6 +18,7 @@ module.exports = function(config) {
       'test/lib/jquery-1.7.2.min.js',
       'node_modules/multiple-select/multiple-select.js',
       'src/jsCronUI.js',
+      'src/jsCronUI-template.js',
       'test/spec/*.js'
     ],
 
