@@ -86,7 +86,7 @@
 		var disableUiUpdates = false;
 		var currentState = {
 			time: '',
-			pattern: 'daily',
+			pattern: '',
 			selected: '',
 			days: [],
 			occurrence: '',
