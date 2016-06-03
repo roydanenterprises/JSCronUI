@@ -126,7 +126,7 @@
 			updateDom();
 		}
 
-		this.init = function () {
+		function init() {
 
 			if (settings && (!settings.container || !settings.container instanceof jQuery)) {
 				
@@ -769,7 +769,7 @@
 		};
 
 		try {
-			this.init();
+			init();
 		}
 		catch (e) {
 			throw new CronError(80, e, [e.message]);
