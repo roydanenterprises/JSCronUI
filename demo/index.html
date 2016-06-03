@@ -25,11 +25,11 @@
         var $s = $('#Schedule');
 
         function updateDebug(){
-          $('#debug').val($s.jsCronUIGetInstance().getCron());
+          $('#debug').val($s.jsCronUI('getCron'));
        }
 
         $('.init').on('click', function(){
-          $s.jsCronUI();
+          $s.jsCronUI({});
           updateDebug();
         });
 
