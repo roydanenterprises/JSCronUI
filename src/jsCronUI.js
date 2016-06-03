@@ -78,50 +78,22 @@
 		var currentState = {
 			time: '',
 			pattern: 'daily',
-			dailyOptions: {
-				selected: ''
-			},
-			weeklyOptions: {
-				days: []
-			},
-			monthlyOptions: {
-				selected: '',
-				days: [],
-				occurrence: '',
-				dayOfWeek: ''
-			},
-			yearlyOptions: {
-				selected: '',
-				months: [],
-				days: [],
-				occurrence: '',
-				dayOfWeek: ''
-			}
+			selected: '',
+			days: [],
+			occurrence: '',
+			dayOfWeek: '',
+			months: []
 		};
 
 		this.reset = function () {
 			currentState = {
 				time: '',
 				pattern: '',
-				dailyOptions: {
-					selected: ''
-				},
-				weeklyOptions: {
-					days: []
-				},
-				monthlyOptions: {
-					selected: '',
-					days: [],
-					occurrence: '',
-					dayOfWeek: ''
-				},
-				yearlyOptions: {
-					selected: '',
-					months: [],
-					days: [],
-					occurrence: '',
-					dayOfWeek: ''
-				}
+				selected: '',
+				days: [],
+				occurrence: '',
+				dayOfWeek: '',
+				months: []
 			};
 
 			disableUiUpdates = true;
@@ -166,7 +138,7 @@
 				return string.length < max ? pad('0' + string, max) : string;
 			}
 
-			var state, inDays, days, i;
+			var inDays, days, i;
 
 			if (!expression) {
 				return;
@@ -189,30 +161,29 @@
 			currentState.time = pad(values[2], 2) + ':' + pad(values[1], 2);
 
 			if (values[4] !== '*') {
-				state = currentState.yearlyOptions;
 				//Expression is yearly
 				currentState.pattern = 'yearly';
-				state.months = values[4].split(',');
+				currentState.months = values[4].split(',');
 
 				if (values[3] !== '?') {
 					//Specific day of the month
-					state.selected = 'specificDay';
-					state.days = values[3].split(',');
+					currentState.selected = 'specificDay';
+					currentState.days = values[3].split(',');
 				}
 				else if (values[5].indexOf('#') > 0) {
 					//Specific occurrence of the month
-					state.selected = 'weekOccurrence';
+					currentState.selected = 'weekOccurrence';
 					var occArr = values[5].split('#');
 
-					state.dayOfWeek = occArr[0];
-					state.occurrence = '#' + occArr[1];
+					currentState.dayOfWeek = occArr[0];
+					currentState.occurrence = '#' + occArr[1];
 				}
 				else if (values[5].indexOf('L') > 0) {
 					//Specific occurrence of the month
-					state.selected = 'weekOccurrence';
+					currentState.selected = 'weekOccurrence';
 
-					state.occurrence = 'L';
-					state.dayOfWeek = values[5].split('L')[0];
+					currentState.occurrence = 'L';
+					currentState.dayOfWeek = values[5].split('L')[0];
 				}
 				else {
 					throw new CronError(60, 'Could not understand yearly schedule options. ' + expression);
@@ -221,12 +192,12 @@
 			else if (values[3] === '*' || values[5] === '*') {
 				//Expression is daily - every day
 				currentState.pattern = 'daily';
-				currentState.dailyOptions.selected = 'daily';
+				currentState.selected = 'daily';
 			}
 			else if (values[5] === '2-6' || values[5] === '2,3,4,5,6') {
 				//Expression is daily - weekdays
 				currentState.pattern = 'daily';
-				currentState.dailyOptions.selected = 'weekday';
+				currentState.selected = 'weekday';
 			}
 			else if (values[5].indexOf('#') === -1 && values[5].indexOf('L') === -1 && values[5] !== '?') {
 				//Expression is weekly
@@ -237,46 +208,45 @@
 					for (i = parseInt(inDays[0]) ; i <= parseInt(inDays[1]) ; i++) {
 						days.push(i);
 					};
-					currentState.weeklyOptions.days = days;
+					currentState.days = days;
 				}
 				else {
-					currentState.weeklyOptions.days = values[5].split(',');
+					currentState.days = values[5].split(',');
 				}
 			}
 			else {
 				//Expression is monthly
 				currentState.pattern = 'monthly';
-				state = currentState.monthlyOptions;
 
 				if (values[3] === 'L') {
-					state.selected = 'last';
+					currentState.selected = 'last';
 				}
 				else if (values[5].indexOf('#') > 0) {
 					var weekdays = values[5].split('#');
 
-					state.selected = 'week';
-					state.dayOfWeek = weekdays[0];
-					state.occurrence = '#' + weekdays[1];
+					currentState.selected = 'week';
+					currentState.dayOfWeek = weekdays[0];
+					currentState.occurrence = '#' + weekdays[1];
 				}
 				else if (values[5].indexOf('L') > 0) {
 					var weekday = values[5].split('L')[0];
 
-					state.selected = 'week';
-					state.dayOfWeek = weekday;
-					state.occurrence = 'L';
+					currentState.selected = 'week';
+					currentState.dayOfWeek = weekday;
+					currentState.occurrence = 'L';
 				}
 				else {
-					state.selected = 'date';
+					currentState.selected = 'date';
 					if (values[3].indexOf('-') > 0) {
 						inDays = values[3].split('-');
 						days = [];
 						for (i = parseInt(inDays[0]) ; i <= parseInt(inDays[1]) ; i++) {
 							days.push(i);
 						};
-						state.days = days;
+						currentState.days = days;
 					}
 					else {
-						state.days = values[3].split(',');
+						currentState.days = values[3].split(',');
 					}
 
 				}
@@ -293,13 +263,11 @@
 			dayOfMonth = '*',
 			month = '*',
 			year = '*',
-			dayOfWeek = '?',
-			state;
+			dayOfWeek = '?';
 
 			switch (currentState.pattern) {
 				case 'daily':
-					state = currentState.dailyOptions;
-					switch (state.selected) {
+					switch (currentState.selected) {
 						case 'daily':
 							//Do nothing - use defaults
 							break;
@@ -309,50 +277,48 @@
 							break;
 						default:
 							if (validate) {
-								throw new CronError(31, 'A daily selection is required.', state.selected);
+								throw new CronError(31, 'A daily selection is required.', currentState.selected);
 							}
 					}
 					break;
 				case 'weekly':
-					dayOfWeek = currentState.weeklyOptions.days.join(',');
+					dayOfWeek = currentState.days.join(',');
 					if (validate && !dayOfWeek) {
 						throw new CronError(41, 'A day of week selection is required.', currentState.pattern);
 					}
 					dayOfMonth = '?';
 					break;
 				case 'monthly':
-					state = currentState.monthlyOptions;
-					switch (state.selected) {
+					switch (currentState.selected) {
 						case 'date':
-							dayOfMonth = state.days.join(',');
+							dayOfMonth = currentState.days.join(',');
 							break;
 						case 'last':
 							dayOfMonth = 'L';
 							break;
 						case 'week':
 							dayOfMonth = '?';
-							dayOfWeek = state.dayOfWeek + state.occurrence;
+							dayOfWeek = currentState.dayOfWeek + currentState.occurrence;
 							break;
 						default:
 							if (validate) {
-								throw new CronError(51, 'A date or day of week selection is required.', state.selected);
+								throw new CronError(51, 'A date or day of week selection is required.', currentState.selected);
 							}
 					}
 					break;
 				case 'yearly':
-					state = currentState.yearlyOptions;
-					month = state.months.join(',');
-					switch (state.selected) {
+					month = currentState.months.join(',');
+					switch (currentState.selected) {
 						case 'specificDay':
-							dayOfMonth = state.days.join(',');
+							dayOfMonth = currentState.days.join(',');
 							break;
 						case 'weekOccurrence':
 							dayOfMonth = '?';
-							dayOfWeek = state.dayOfWeek + state.occurrence;
+							dayOfWeek = currentState.dayOfWeek + currentState.occurrence;
 							break;
 						default:
 							if (validate) {
-								throw new CronError(61, 'A month and date or day of week selection is required.', state.selected);
+								throw new CronError(61, 'A month and date or day of week selection is required.', currentState.selected);
 							}
 					}
 					break;
@@ -397,78 +363,72 @@
 				throw new CronError(20, 'A time is required.');
 			}
 
-			var state;
-
 			switch (currentState.pattern) {
 				case 'daily':
-					state = currentState.dailyOptions;
-					switch (state.selected) {
+					switch (currentState.selected) {
 						case 'daily':
 						case 'weekday':
 							//No validation options when these are selected
 							break;
 						default:
 							//No option is selected
-							throw new CronError(30, 'A daily selection is required.', state.selected);
+							throw new CronError(30, 'A daily selection is required.', currentState.selected);
 					}
 					break;
 				case 'weekly':
-					if (currentState.weeklyOptions.days.length === 0 || $.inArray('', currentState.weeklyOptions.days) >= 0) {
+					if (currentState.days.length === 0 || $.inArray('', currentState.days) >= 0) {
 						throw new CronError(40, 'A day of week selection is required.', currentState.pattern);
 					}
 					break;
 				case 'monthly':
-					state = currentState.monthlyOptions;
-					switch (state.selected) {
+					switch (currentState.selected) {
 						case 'last':
 							//No validation when this is selected
 							break;
 						case 'date':
-							if (state.days.length === 0 || $.inArray('', state.days) >= 0) {
+							if (currentState.days.length === 0 || $.inArray('', currentState.days) >= 0) {
 								throw new CronError(51, 'Must provide one or more days');
 							}
 							break;
 						case 'week':
-							if (!state.occurrence) {
+							if (!currentState.occurrence) {
 								throw new CronError(53, 'Must select an occurrence');
 							}
 
-							if (!state.dayOfWeek) {
+							if (!currentState.dayOfWeek) {
 								throw new CronError(52, 'Must select a day of the week');
 							}
 							break;
 						default:
-							throw new CronError(50, 'A date or day of week selection is required.', state.selected);
+							throw new CronError(50, 'A date or day of week selection is required.', currentState.selected);
 					}
 					break;
 				case 'yearly':
-					state = currentState.yearlyOptions;
-
-					switch (state.selected) {
+					switch (currentState.selected) {
 						case 'specificDay':
-							if (state.months.length === 0 || $.inArray('', state.months) >= 0) {
+							if (currentState.months.length === 0 || $.inArray('', currentState.months) >= 0) {
 								throw new CronError(62, 'Must select one or more months');
 							}
 
-							if (state.days.length === 0 || $.inArray('', state.days) >= 0) {
+							if (currentState.days.length === 0 || $.inArray('', currentState.days) >= 0) {
 								throw new CronError(63, 'Must provide one or more days');
 							}
 							break;
 						case 'weekOccurrence':
-							if (!state.occurrence) {
+							if (!currentState.occurrence) {
 								throw new CronError(65, 'Must choose an occurrence');
 							}
 
-							if (!state.dayOfWeek) {
+							if (!currentState.dayOfWeek) {
 								throw new CronError(64, 'Must choose a day of the week');
 							}
 
-							if (state.months.length === 0 || $.inArray('', state.months) >= 0) {
+							if (currentState.months.length === 0 || $.inArray('', currentState.months) >= 0) {
 								throw new CronError(62, 'Must select one or more months');
 							}
 							break;
 						default:
-							throw new CronError(61, 'A month and date or day of week selection is required.', state.selected);
+							throw new CronError(61, 'A month and date or day of week selection is required.', currentState.selected);
 					}
 					break;
 				default:
@@ -550,25 +510,25 @@
 
 			switch (currentState.pattern) {
 				case 'daily':
-					self.$el.find('[name="dailyPattern"][value="' + currentState.dailyOptions.selected + '"]').prop('checked', true).change();
+					self.$el.find('[name="dailyPattern"][value="' + currentState.selected + '"]').prop('checked', true).change();
 					break;
 				case 'weekly':
-					$.each(currentState.weeklyOptions.days, function () {
+					$.each(currentState.days, function () {
 						self.$el.find('[name="weeklyDays"] input:checkbox[value="' + this + '"]').prop('checked', true).change();
 					});
 					break;
 				case 'monthly':
-					self.$el.find('[name="monthlyPattern"][value="' + currentState.monthlyOptions.selected + '"]').prop('checked', true).change();
-					self.$el.find('[name="date"]').val(currentState.monthlyOptions.days.join()).change();
-					self.$el.find('[name="weekOccurrence"]').val(currentState.monthlyOptions.occurrence).change();
-					self.$el.find('[name="dayOfWeek"]').val(currentState.monthlyOptions.dayOfWeek).change();
+					self.$el.find('[name="monthlyPattern"][value="' + currentState.selected + '"]').prop('checked', true).change();
+					self.$el.find('[name="date"]').val(currentState.days.join()).change();
+					self.$el.find('[name="weekOccurrence"]').val(currentState.occurrence).change();
+					self.$el.find('[name="dayOfWeek"]').val(currentState.dayOfWeek).change();
 					break;
 				case 'yearly':
-					self.$el.find('[name="yearPattern"][value="' + currentState.yearlyOptions.selected + '"]').prop('checked', true).change();
-					self.$el.find('[name="monthSpecificDay"]').multipleSelect('setSelects', currentState.yearlyOptions.months);
-					self.$el.find('[name="dayOfMonth"]').val(currentState.yearlyOptions.days.join()).change();
-					self.$el.find('[name="dayOfWeek"]').val(currentState.yearlyOptions.dayOfWeek).change();
-					self.$el.find('[name="weekOccurrence"]').val(currentState.yearlyOptions.occurrence).change();
+					self.$el.find('[name="yearPattern"][value="' + currentState.selected + '"]').prop('checked', true).change();
+					self.$el.find('[name="monthSpecificDay"]').multipleSelect('setSelects', currentState.months);
+					self.$el.find('[name="dayOfMonth"]').val(currentState.days.join()).change();
+					self.$el.find('[name="dayOfWeek"]').val(currentState.dayOfWeek).change();
+					self.$el.find('[name="weekOccurrence"]').val(currentState.occurrence).change();
 					break;
 			}
 		};
@@ -577,32 +537,29 @@
 			if (disableUiUpdates) {
 				return;
 			}
-			var state;
 
 			currentState.pattern = self.$el.find('[name="ScheduleType"]:checked').val();
 			currentState.time = self.$el.find('[name="time"]').attr('data-time');
 
 			switch (currentState.pattern) {
 				case 'daily':
-					currentState.dailyOptions.selected = self.$el.find('[name="dailyPattern"]:checked').val();
+					currentState.selected = self.$el.find('[name="dailyPattern"]:checked').val();
 					break;
 				case 'weekly':
-					currentState.weeklyOptions.days = self.$el.find('div[name="weeklyDays"] input:checkbox:checked').map(function () { return this.value; }).get();
+					currentState.days = self.$el.find('div[name="weeklyDays"] input:checkbox:checked').map(function () { return this.value; }).get();
 					break;
 				case 'monthly':
-					state = currentState.monthlyOptions;
-					state.selected = self.$el.find('[name="monthlyPattern"]:checked').val();
-					state.occurrence = self.$el.find('[name="weekOccurrence"]').val();
-					state.dayOfWeek = self.$el.find('[name="dayOfWeek"]').val();
-					state.days = self.$el.find('[name="date"]').val().split(/[\s,]+/);
+					currentState.selected = self.$el.find('[name="monthlyPattern"]:checked').val();
+					currentState.occurrence = self.$el.find('[name="weekOccurrence"]').val();
+					currentState.dayOfWeek = self.$el.find('[name="dayOfWeek"]').val();
+					currentState.days = self.$el.find('[name="date"]').val().split(/[\s,]+/);
 					break;
 				case 'yearly':
-					state = currentState.yearlyOptions;
-					state.selected = self.$el.find('[name="yearPattern"]:checked').val();
-					state.months = self.$el.find('[name="monthSpecificDay"]').multipleSelect('getSelects');
-					state.days = self.$el.find('[name="dayOfMonth"]').val().split(/[\s,]+/).sort(function (a, b) { return (parseInt(b) < parseInt(a)) });
-					state.occurrence = self.$el.find('[name="weekOccurrence"]').val();
-					state.dayOfWeek = self.$el.find('[name="dayOfWeek"]').val();
+					currentState.selected = self.$el.find('[name="yearPattern"]:checked').val();
+					currentState.months = self.$el.find('[name="monthSpecificDay"]').multipleSelect('getSelects');
+					currentState.days = self.$el.find('[name="dayOfMonth"]').val().split(/[\s,]+/).sort(function (a, b) { return (parseInt(b) < parseInt(a)) });
+					currentState.occurrence = self.$el.find('[name="weekOccurrence"]').val();
+					currentState.dayOfWeek = self.$el.find('[name="dayOfWeek"]').val();
 					break;
 			}
 
@@ -680,7 +637,7 @@
 		};
 
 		this.toEnglishString = function () {
-			var result = '', state;
+			var result = '';
 
 			var toTimeString = function (val) {
 				var time = val.trim().match(/^(\d{2})(?::)(\d{2})(?::)?(\d{2})?$/i);
@@ -734,55 +691,53 @@
 
 			switch (currentState.pattern) {
 				case 'daily':
-					result = 'Every ' + (currentState.dailyOptions.selected === 'weekday' ? 'week' : '') + 'day at ' + timeString;
+					result = 'Every ' + (currentState.selected === 'weekday' ? 'week' : '') + 'day at ' + timeString;
 					break;
 				case 'weekly':
-					result = 'Every week on ' + toEnglishDays(currentState.weeklyOptions.days).join(', ') + ' at ' + timeString;
+					result = 'Every week on ' + toEnglishDays(currentState.days).join(', ') + ' at ' + timeString;
 					break;
 				case 'monthly':
-					state = currentState.monthlyOptions;
 					result = 'Every month on the ';
-					switch (state.selected) {
+					switch (currentState.selected) {
 						case 'date':
-							result += state.days.join(', ') + ' at ' + timeString;
+							result += currentState.days.join(', ') + ' at ' + timeString;
 							break;
 						case 'week':
-							if (state.occurrence !== '') {
-								if (state.occurrence === 'L') {
+							if (currentState.occurrence !== '') {
+								if (currentState.occurrence === 'L') {
 									result += 'last';
 								} else {
-									result += toEnglishOccurrence(state.occurrence.split('#')).join('');
+									result += toEnglishOccurrence(currentState.occurrence.split('#')).join('');
 								}
 
-								result += ' ' + toEnglishDays(state.dayOfWeek).join('') + ' at ' + timeString;
+								result += ' ' + toEnglishDays(currentState.dayOfWeek).join('') + ' at ' + timeString;
 							}
 							break;
 						case 'last':
 							result += 'last day of the month at ' + timeString;
 							break;
 						default:
-							throw new CronError(73, 'Not implemented: Monthly.' + state.selected + '.toEnglishString');
+							throw new CronError(73, 'Not implemented: Monthly.' + currentState.selected + '.toEnglishString');
 					}
 					break;
 				case 'yearly':
-					state = currentState.yearlyOptions;
 					result = 'Every year on ';
-					switch (state.selected) {
+					switch (currentState.selected) {
 						case 'specificDay':
-							result += toEnglishMonths(state.months).join(', ') + ' ' + state.days.join(', ') + ' at ' + timeString;
+							result += toEnglishMonths(currentState.months).join(', ') + ' ' + currentState.days.join(', ') + ' at ' + timeString;
 							break;
 						case 'weekOccurrence':
 							result += 'the '
-							if (state.occurrence === 'L') {
+							if (currentState.occurrence === 'L') {
 								result += 'last ';
 							} else {
-								result += toEnglishOccurrence(state.occurrence.split('#')).join('') + ' ';
+								result += toEnglishOccurrence(currentState.occurrence.split('#')).join('') + ' ';
 							}
 
-							result += toEnglishDays(state.dayOfWeek).join('') + ' of ' + toEnglishMonths(state.months).join(', ') + ' at ' + timeString;
+							result += toEnglishDays(currentState.dayOfWeek).join('') + ' of ' + toEnglishMonths(currentState.months).join(', ') + ' at ' + timeString;
 							break;
 						default:
-							throw new CronError(74, 'Not implemented: Yearly.' + state.selected + '.toEnglishString');
+							throw new CronError(74, 'Not implemented: Yearly.' + currentState.selected + '.toEnglishString');
 					}
 
 					break;
