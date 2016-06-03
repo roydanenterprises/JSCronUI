@@ -33,14 +33,12 @@
 			'<div class="c-schedule-options" style="display: none;">' + //c-schedule-options
 				'<div class="js-schedule-tod">' +
 					'<label>' +
-						'<div>Time<span>' +
-								'<i/>' +
-							'</span>' +
-						'</div>' +
+						'<div>Time</div>' +
 						'<input type="text" name="time" />' +
 					'</label>' +
 				'</div>' +
-				'<div class="js-schedule-daily">Repeat every:<div>' + //js-schedule-daily
+				'<div class="js-schedule-daily">Repeat every:' + //js-schedule-daily
+					'<div>' + 
 						'<label>' +
 							'<input type="radio" value="daily" name="dailyPattern" />' +
 							'<span>day</span>' +
@@ -53,7 +51,8 @@
 						'</label>' +
 					'</div>' +
 				'</div>' +
-				'<div class="js-schedule-weekly">Repeat every week on:<div name="weeklyDays">' + //js-schedule-weekly
+				'<div class="js-schedule-weekly">Repeat every week on:' + //js-schedule-weekly
+					'<div name="weeklyDays">' + 
 						'<label>' +
 							'<input type="checkbox" value="1" />' +
 							'<span>Sunday</span>' +
@@ -84,7 +83,8 @@
 						'</label>' +
 					'</div>' +
 				'</div>' +
-				'<div class="js-schedule-monthly">Repeat every month:<div>' + //js-schedule-monthly
+				'<div class="js-schedule-monthly">Repeat every month:' + //js-schedule-monthly
+					'<div>' + 
 						'<label>' +
 							'<input type="radio" value="last" name="monthlyPattern" />' +
 							'<span>on last day of the month</span>' +
@@ -122,7 +122,8 @@
 						'</label>' +
 					'</div>' +
 				'</div>' +
-				'<div class="js-schedule-yearly">Repeat every year:<div>' + //js-schedule-yearly
+				'<div class="js-schedule-yearly">Repeat every year:' + //js-schedule-yearly
+					'<div>' + 
 						'<label>' +
 							'<input type="radio" name="yearPattern" value="specificDay"/>' +
 							'<span>on </span>' +
