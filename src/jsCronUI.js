@@ -1,5 +1,4 @@
 (function ($) {
-
 	$.fn.jsCronUI = function (settings) {
 		var value;
 
@@ -10,10 +9,10 @@
 			this.each(function () {
 				var instance = $.data(this, 'jsCronUI');
 				if (!instance) {
-					throw new CronError(11, 'Cannot call method ' + settings + ' on jsCronUI prior to initialization');
+					throw new CronError(11, settings, [settings]);
 				}
 				if (!$.isFunction(instance[settings]) || settings.charAt(0) === '_') {
-					throw new CronError(10, 'No such method ' + settings);
+					throw new CronError(10, settings, [settings]);
 				}
 				value = instance[settings].apply(instance, args);
 			});
@@ -31,10 +30,6 @@
 }).call(this, jQuery);
 
 (function ($) {
-
-	/* TODO: convert from hard-coded messages to a pre-defined list (as below)
-	Below is the current list of errors:
-
 	var errorList = [
 		{ id: 10, message: 'No such method %1' },
 		{ id: 11, message: 'Cannot call method %1 on jsCronUI prior to initialization' },
@@ -58,17 +53,31 @@
 		{ id: 74, message: 'Not implemented: Yearly.%1.toEnglishString' },
 		{ id: 80, message: 'Unknown error occurred inside jsCronUI library %1' }
 	];
-	*/
-
-	function CronError(number, message, additionalData) {
+	
+	function CronError(number, additionalData, substitutions) {
 		this.number = number;
-		this.message = message;
+		this.message = errorList.filter(function(error){
+			return error.id === number;
+		})[0].message;
+
+		if (substitutions)
+		{
+			for (var i = substitutions.length - 1; i >= 0; i--) {
+				this.message = this.message.replace(new RegExp('%' + (i + 1), 'g'), substitutions[i]);
+			}
+		}
+
 		this.data = additionalData;
 		this.stack = (new Error()).stack;
 	}
+
 	CronError.prototype = Object.create(Error.prototype);
 	CronError.prototype.constructor = CronError;
 
+	this.CronError = CronError;
+}).call(this, jQuery);
+
+(function ($) {
 	function jsCronUI(settings, $element) {
 		var self = this;
 		self.$el = $element;
@@ -152,7 +161,7 @@
 			}
 
 			if (values.length !== 7) {
-				throw new CronError(12, 'Could not load schedule with expression: ' + expression);
+				throw new CronError(12, expression, [expression]);
 			}
 
 			//reset model to default values
@@ -186,7 +195,7 @@
 					currentState.dayOfWeek = values[5].split('L')[0];
 				}
 				else {
-					throw new CronError(60, 'Could not understand yearly schedule options. ' + expression);
+					throw new CronError(60, expression, [expression]);
 				}
 			}
 			else if (values[3] === '*' || values[5] === '*') {
@@ -277,14 +286,14 @@
 							break;
 						default:
 							if (validate) {
-								throw new CronError(31, 'A daily selection is required.', currentState.selected);
+								throw new CronError(31, currentState.selected);
 							}
 					}
 					break;
 				case 'weekly':
 					dayOfWeek = currentState.days.join(',');
 					if (validate && !dayOfWeek) {
-						throw new CronError(41, 'A day of week selection is required.', currentState.pattern);
+						throw new CronError(41, currentState.pattern);
 					}
 					dayOfMonth = '?';
 					break;
@@ -302,7 +311,7 @@
 							break;
 						default:
 							if (validate) {
-								throw new CronError(51, 'A date or day of week selection is required.', currentState.selected);
+								throw new CronError(51, currentState.selected);
 							}
 					}
 					break;
@@ -318,13 +327,13 @@
 							break;
 						default:
 							if (validate) {
-								throw new CronError(61, 'A month and date or day of week selection is required.', currentState.selected);
+								throw new CronError(61, currentState.selected);
 							}
 					}
 					break;
 				default:
 					if (validate) {
-						throw new CronError(13, 'A schedule type is required.', currentState.pattern);
+						throw new CronError(13, currentState.pattern);
 					}
 					break;
 			}
@@ -335,7 +344,7 @@
 				minute = parseInt(timeArr[1]) + '';
 			} else {
 				if (validate) {
-					throw new CronError(20, 'A time is required.');
+					throw new CronError(20);
 				}
 			}
 
@@ -360,7 +369,7 @@
 		function validateState() {
 			//Check for errors in the state of the current model
 			if (!currentState.time) {
-				throw new CronError(20, 'A time is required.');
+				throw new CronError(20);
 			}
 
 			switch (currentState.pattern) {
@@ -372,12 +381,12 @@
 							break;
 						default:
 							//No option is selected
-							throw new CronError(30, 'A daily selection is required.', currentState.selected);
+							throw new CronError(30, currentState.selected);
 					}
 					break;
 				case 'weekly':
 					if (currentState.days.length === 0 || $.inArray('', currentState.days) >= 0) {
-						throw new CronError(40, 'A day of week selection is required.', currentState.pattern);
+						throw new CronError(40, currentState.pattern);
 					}
 					break;
 				case 'monthly':
@@ -387,52 +396,52 @@
 							break;
 						case 'date':
 							if (currentState.days.length === 0 || $.inArray('', currentState.days) >= 0) {
-								throw new CronError(51, 'Must provide one or more days');
+								throw new CronError(51);
 							}
 							break;
 						case 'week':
 							if (!currentState.occurrence) {
-								throw new CronError(53, 'Must select an occurrence');
+								throw new CronError(53);
 							}
 
 							if (!currentState.dayOfWeek) {
-								throw new CronError(52, 'Must select a day of the week');
+								throw new CronError(52);
 							}
 							break;
 						default:
-							throw new CronError(50, 'A date or day of week selection is required.', currentState.selected);
+							throw new CronError(50, currentState.selected);
 					}
 					break;
 				case 'yearly':
 					switch (currentState.selected) {
 						case 'specificDay':
 							if (currentState.months.length === 0 || $.inArray('', currentState.months) >= 0) {
-								throw new CronError(62, 'Must select one or more months');
+								throw new CronError(62);
 							}
 
 							if (currentState.days.length === 0 || $.inArray('', currentState.days) >= 0) {
-								throw new CronError(63, 'Must provide one or more days');
+								throw new CronError(63);
 							}
 							break;
 						case 'weekOccurrence':
 							if (!currentState.occurrence) {
-								throw new CronError(65, 'Must choose an occurrence');
+								throw new CronError(65);
 							}
 
 							if (!currentState.dayOfWeek) {
-								throw new CronError(64, 'Must choose a day of the week');
+								throw new CronError(64);
 							}
 
 							if (currentState.months.length === 0 || $.inArray('', currentState.months) >= 0) {
-								throw new CronError(62, 'Must select one or more months');
+								throw new CronError(62);
 							}
 							break;
 						default:
-							throw new CronError(61, 'A month and date or day of week selection is required.', currentState.selected);
+							throw new CronError(61, currentState.selected);
 					}
 					break;
 				default:
-					throw new CronError(13, 'A schedule type is required.', currentState.pattern);
+					throw new CronError(13, currentState.pattern);
 			}
 
 			return true;
@@ -717,7 +726,7 @@
 							result += 'last day of the month at ' + timeString;
 							break;
 						default:
-							throw new CronError(73, 'Not implemented: Monthly.' + currentState.selected + '.toEnglishString');
+							throw new CronError(73, currentState.selected, currentState.selected);
 					}
 					break;
 				case 'yearly':
@@ -737,12 +746,12 @@
 							result += toEnglishDays(currentState.dayOfWeek).join('') + ' of ' + toEnglishMonths(currentState.months).join(', ') + ' at ' + timeString;
 							break;
 						default:
-							throw new CronError(74, 'Not implemented: Yearly.' + currentState.selected + '.toEnglishString');
+							throw new CronError(74, currentState.selected, currentState.selected);
 					}
 
 					break;
 				default:
-					throw new CronError(70, 'Not implemented: ' + currentState.pattern + '.toEnglishString');
+					throw new CronError(70, currentState.pattern, currentState.pattern);
 			}
 
 			return result;
@@ -753,7 +762,7 @@
 		}
 		catch (e) {
 			console.error(e);
-			throw new CronError(80, 'Unknown error occurred inside jsCronUI library ' + e.message);
+			throw new CronError(80, e, e.message);
 		}
 	}
 	this.jsCronUI = jsCronUI;
