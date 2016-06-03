@@ -82,8 +82,12 @@
 	function jsCronUI(settings, $element) {
 		var self = this;
 		self.$el = $element;
-		self.$bindTo = settings.bindTo || null;
-		self.initialValue = settings.initialValue;
+
+		if (settings){
+			self.$bindTo = settings.bindTo || null;
+			self.initialValue = settings.initialValue;
+		}
+
 		var disableUiUpdates = false;
 		var currentState = {
 			time: '',
@@ -124,7 +128,7 @@
 
 		this.init = function () {
 
-			if (!settings.container || !settings.container instanceof jQuery) {
+			if (settings && (!settings.container || !settings.container instanceof jQuery)) {
 				
 				if ($.fn.jsCronUI.template) {
 					self.$el.append($.fn.jsCronUI.template());
