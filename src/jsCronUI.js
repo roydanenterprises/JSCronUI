@@ -51,7 +51,7 @@
 		{ id: 70, message: 'Not implemented: %1.toEnglishString' },
 		{ id: 73, message: 'Not implemented: Monthly.%1.toEnglishString' },
 		{ id: 74, message: 'Not implemented: Yearly.%1.toEnglishString' },
-		{ id: 80, message: 'Unknown error occurred inside jsCronUI library %1' }
+		{ id: 80, message: 'Unknown error occurred inside jsCronUI library: %1' }
 	];
 	
 	function CronError(number, additionalData, substitutions) {
@@ -726,7 +726,7 @@
 							result += 'last day of the month at ' + timeString;
 							break;
 						default:
-							throw new CronError(73, currentState.selected, currentState.selected);
+							throw new CronError(73, currentState.selected, [currentState.selected]);
 					}
 					break;
 				case 'yearly':
@@ -746,12 +746,12 @@
 							result += toEnglishDays(currentState.dayOfWeek).join('') + ' of ' + toEnglishMonths(currentState.months).join(', ') + ' at ' + timeString;
 							break;
 						default:
-							throw new CronError(74, currentState.selected, currentState.selected);
+							throw new CronError(74, currentState.selected, [currentState.selected]);
 					}
 
 					break;
 				default:
-					throw new CronError(70, currentState.pattern, currentState.pattern);
+					throw new CronError(70, currentState.pattern, [currentState.pattern]);
 			}
 
 			return result;
@@ -761,8 +761,7 @@
 			this.init();
 		}
 		catch (e) {
-			console.error(e);
-			throw new CronError(80, e, e.message);
+			throw new CronError(80, e, [e.message]);
 		}
 	}
 	this.jsCronUI = jsCronUI;
