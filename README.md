@@ -1,6 +1,8 @@
 # JSCronUI
 [![Build Status](https://travis-ci.org/roydanenterprises/JSCronUI.svg?branch=master)](https://travis-ci.org/roydanenterprises/JSCronUI)
 
+[DEMO](https://roydanenterprises.github.io/JSCronUI/)
+
 A jQuery extension for generating [Quartz](http://quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger) cron expressions.
 
 ## About
