@@ -7,8 +7,11 @@ JSCronUI offers a comprehensive interface for users to schedule tasks, while all
 Developers can provide a customized template to run JSCronUI on top of, or use the included template. If an empty template is provided, JSCronUI can also be used without a UI to validate cron strings or quickly convert a cron string to english.
 
 ## How To Use
-JSCronUI extends jQuery, so to create an instance simply call `.jsCronUI()` on any jQuery object. JSCronUI will automatically inject the necessary DOM to the given element. Once created, call any of the methods by calling `.jsCronUI('methodName', [arguments])` on the same jQuery object. 
-You can also create a `new jsCronUI(settings, jQueryObject)` in-memory and call the methods directly.
+You can create a `new jsCronUI(settings, element)` in-memory and call the methods directly.
+JSCronUI also extends jQuery, and a new instance can be created by calling `.jsCronUI()` on any jQuery object. Once created, call any of the methods by calling `.jsCronUI('methodName', arguments)` on the same jQuery object. 
+
+In both cases, JSCronUI will automatically inject the necessary DOM to the given element. 
+
 
 ## Available Commands
 * `reset()` - Reverts JSCronUI to the default state (`0 * * * * ? *`).

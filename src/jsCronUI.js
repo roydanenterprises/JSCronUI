@@ -81,7 +81,7 @@
 (function ($) {
 	function jsCronUI(settings, $element) {
 		var self = this;
-		self.$el = $element;
+		self.$el = $($element);
 
 		if (settings){
 			self.$bindTo = settings.bindTo || null;
