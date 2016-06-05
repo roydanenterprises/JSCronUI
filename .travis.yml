@@ -10,5 +10,5 @@ before_script:
 after_success: "./deploy.sh"
 env:
     global:
-        - ENCRYPTION_LABEL: "6009b61b40b8"
+        - ENCRYPTION_LABEL: "c5a66b2fe33a"
         - COMMIT_AUTHOR_EMAIL: "publish@roydan.com"
