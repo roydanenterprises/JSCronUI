@@ -1,17 +1,17 @@
 {
   "name": "jqcron",
-  "version": "0.1.0",
-  "description": "This is a forked version of arnapou's jQuery plugin, supporting quartz expressions",
+  "version": "1.0.0",
+  "description": "A jQuery extension for generating Quartz cron expressions.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bmuenzenmeyer/jqcron.git"
+    "url": "git+https://github.com/roydanenterprises/JSCronUI.git"
   },
   "author": "ROYDAN Enterprises, Ltd.",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bmuenzenmeyer/jqcron/issues"
+    "url": "https://github.com/roydanenterprises/JSCronUI/issues"
   },
-  "homepage": "https://github.com/bmuenzenmeyer/jqcron#readme",
+  "homepage": "https://github.com/roydanenterprises/JSCronUI#readme",
   "devDependencies": {
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.22",
