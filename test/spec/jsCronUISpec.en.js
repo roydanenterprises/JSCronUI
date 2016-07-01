@@ -514,5 +514,18 @@ describe("jsCronUI", function(){
             expect($fixture.find('.js-schedule-yearly [name="dayOfWeek"]').prop('disabled')).toBe(true);
             expect($fixture.find('.js-schedule-yearly [name="monthOccurrence"]').prop('disabled')).toBe(true);
         });
+
+        it("should only allow dates up to 31, and remove all others", function(){
+            $fixture.find('.c-schedule-type input[value="monthly"]').attr('checked', true).change();
+            $fixture.find('.js-schedule-tod [name="time"]').attr('data-time', "14:03").change();
+            $fixture.find('.js-schedule-monthly [name="monthlyPattern"][value="date"]').attr('checked', true).change();
+            var dayInput = $fixture.find('.js-schedule-monthly [name="date"]');
+
+            //Act
+            dayInput.val('1,47,18,99').change();
+
+            //Assert
+            expect(dayInput.val()).toBe('1,18');
+        });
     });
 });

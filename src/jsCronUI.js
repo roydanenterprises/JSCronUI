@@ -545,6 +545,10 @@
 								return Math.floor(pre) + '-' + Math.floor(post);
 							}
 
+							if (clean > 31){
+								return '';
+							}
+
 							return Math.floor(clean).toString();
 						}).filter(function(item, index, array){
 							return array.length == 0 || (item && index === array.indexOf(item));
