@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Remove non-decimal characters from date input fields
+- Truncate decimal values in date input fields to just the integer component
+- Remove duplicate date values from date input fields (eg, '2,2,2,2' will result in '2')
+- Disable input fields that are not related to the sub-type selection for Monthly and Yearly options
 
 ## [1.0.0] - 2016-06-03
 - Extracted default template to seperate file to make editing easier.

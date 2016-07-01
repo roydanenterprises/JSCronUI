@@ -369,4 +369,150 @@ describe("jsCronUI", function(){
             expect($fixture.jsCronUI('toEnglishString')).toEqual(englishString);
         });
     });
+
+    describe("", function(){
+        it("should automatically reduce repeated dates to a single instance of the day", function(){
+            //Arrange
+            $fixture.find('.c-schedule-type input[value="monthly"]').attr('checked', true).change();
+            $fixture.find('.js-schedule-tod [name="time"]').attr('data-time', "14:03").change();
+            $fixture.find('.js-schedule-monthly [name="monthlyPattern"][value="date"]').attr('checked', true).change();
+            var dayInput = $fixture.find('.js-schedule-monthly [name="date"]');
+
+            //Act
+            dayInput.val('2,2,2,3,3,4').change();
+
+            //Assert
+            expect(dayInput.val()).toBe('2,3,4');
+        });
+
+        it("should automatically trim days to the integer component and not reflect decimals", function(){
+            //Arrange
+            $fixture.find('.c-schedule-type input[value="monthly"]').attr('checked', true).change();
+            $fixture.find('.js-schedule-tod [name="time"]').attr('data-time', "14:03").change();
+            $fixture.find('.js-schedule-monthly [name="monthlyPattern"][value="date"]').attr('checked', true).change();
+            var dayInput = $fixture.find('.js-schedule-monthly [name="date"]');
+
+            //Act
+            dayInput.val('3.14159256').change();
+
+            //Assert
+            expect(dayInput.val()).toBe('3');
+        });
+
+        it("should automatically trim days in a range to the integer component and not reflect decimals", function(){
+            //Arrange
+            $fixture.find('.c-schedule-type input[value="monthly"]').attr('checked', true).change();
+            $fixture.find('.js-schedule-tod [name="time"]').attr('data-time', "14:03").change();
+            $fixture.find('.js-schedule-monthly [name="monthlyPattern"][value="date"]').attr('checked', true).change();
+            var dayInput = $fixture.find('.js-schedule-monthly [name="date"]');
+
+            //Act
+            dayInput.val('1-15.874').change();
+
+            //Assert
+            expect(dayInput.val()).toBe('1-15');
+        });
+
+        it("should automatically remove non-numbers and trim days in a range to the integer component and not reflect decimals", function(){
+            //Arrange
+            $fixture.find('.c-schedule-type input[value="monthly"]').attr('checked', true).change();
+            $fixture.find('.js-schedule-tod [name="time"]').attr('data-time', "14:03").change();
+            $fixture.find('.js-schedule-monthly [name="monthlyPattern"][value="date"]').attr('checked', true).change();
+            var dayInput = $fixture.find('.js-schedule-monthly [name="date"]');
+
+            //Act
+            dayInput.val('8badval-15.874').change();
+
+            //Assert
+            expect(dayInput.val()).toBe('8-15');
+        });
+
+        it("should strip away any unsupported characters from the days specified", function(){
+            //Arrange
+            $fixture.find('.c-schedule-type input[value="monthly"]').attr('checked', true).change();
+            $fixture.find('.js-schedule-tod [name="time"]').attr('data-time', "14:03").change();
+            $fixture.find('.js-schedule-monthly [name="monthlyPattern"][value="date"]').attr('checked', true).change();
+            var dayInput = $fixture.find('.js-schedule-monthly [name="date"]');
+
+            //Act
+            dayInput.val('1s,4should,9not-15work').change();
+
+            //Assert
+            expect(dayInput.val()).toBe('1,4,9-15');
+        });
+
+        it("should disable occurrence fields in the monthly view when the specific day option is selected", function(){
+            //Arrange
+            $fixture.find('.c-schedule-type input[value="monthly"]').attr('checked', true).change();
+            $fixture.find('.js-schedule-tod [name="time"]').attr('data-time', "14:03").change();
+
+            //Act
+            $fixture.find('.js-schedule-monthly [name="monthlyPattern"][value="date"]').attr('checked', true).change();
+
+            //Assert
+            expect($fixture.find('.js-schedule-monthly [name="weekOccurrence"]').prop('disabled')).toBe(true);
+            expect($fixture.find('.js-schedule-monthly [name="dayOfWeek"]').prop('disabled')).toBe(true);
+            expect($fixture.find('.js-schedule-monthly [name="date"]').prop('disabled')).toBe(false);
+        });
+
+        it("should disable occurrence and specific day fields in the monthly view when the last day option is selected", function(){
+            //Arrange
+            $fixture.find('.c-schedule-type input[value="monthly"]').attr('checked', true).change();
+            $fixture.find('.js-schedule-tod [name="time"]').attr('data-time', "14:03").change();
+            
+            //Act
+            $fixture.find('.js-schedule-monthly [name="monthlyPattern"][value="last"]').attr('checked', true).change();
+
+            //Assert
+            expect($fixture.find('.js-schedule-monthly [name="weekOccurrence"]').prop('disabled')).toBe(true);
+            expect($fixture.find('.js-schedule-monthly [name="dayOfWeek"]').prop('disabled')).toBe(true);
+            expect($fixture.find('.js-schedule-monthly [name="date"]').prop('disabled')).toBe(true);
+        });
+
+        it("should disable specific day fields in the monthly view when the occurrence option is selected", function(){
+            //Arrange
+            $fixture.find('.c-schedule-type input[value="monthly"]').attr('checked', true).change();
+            $fixture.find('.js-schedule-tod [name="time"]').attr('data-time', "14:03").change();
+
+            //Act
+            $fixture.find('.js-schedule-monthly [name="monthlyPattern"][value="week"]').attr('checked', true).change();
+
+            //Assert
+            expect($fixture.find('.js-schedule-monthly [name="weekOccurrence"]').prop('disabled')).toBe(false);
+            expect($fixture.find('.js-schedule-monthly [name="dayOfWeek"]').prop('disabled')).toBe(false);
+            expect($fixture.find('.js-schedule-monthly [name="date"]').prop('disabled')).toBe(true);
+        });
+
+        it("should disable date input fields in the yearly view when the occurrence option is selected", function(){
+            //Arrange
+            $fixture.find('.c-schedule-type input[value="yearly"]').attr('checked', true).change();
+            $fixture.find('.js-schedule-tod [name="time"]').attr('data-time', "18:08").change();
+
+            //Act
+            $fixture.find('.js-schedule-yearly [name="yearPattern"][value="weekOccurrence"]').attr('checked', true).change();
+
+            //Assert
+            expect($fixture.find('.js-schedule-yearly [name="monthSpecificDay"]').prop('disabled')).toBe(true);
+            expect($fixture.find('.js-schedule-yearly [name="dayOfMonth"]').prop('disabled')).toBe(true);
+            expect($fixture.find('.js-schedule-yearly [name="weekOccurrence"]').prop('disabled')).toBe(false);
+            expect($fixture.find('.js-schedule-yearly [name="dayOfWeek"]').prop('disabled')).toBe(false);
+            expect($fixture.find('.js-schedule-yearly [name="monthOccurrence"]').prop('disabled')).toBe(false);
+        });
+
+        it("should disable occurrence input fields in the yearly view when the date option is selected", function(){
+            //Arrange
+            $fixture.find('.c-schedule-type input[value="yearly"]').attr('checked', true).change();
+            $fixture.find('.js-schedule-tod [name="time"]').attr('data-time', "18:08").change();
+
+            //Act
+            $fixture.find('.js-schedule-yearly [name="yearPattern"][value="specificDay"]').attr('checked', true).change();
+
+            //Assert
+            expect($fixture.find('.js-schedule-yearly [name="monthSpecificDay"]').prop('disabled')).toBe(false);
+            expect($fixture.find('.js-schedule-yearly [name="dayOfMonth"]').prop('disabled')).toBe(false);
+            expect($fixture.find('.js-schedule-yearly [name="weekOccurrence"]').prop('disabled')).toBe(true);
+            expect($fixture.find('.js-schedule-yearly [name="dayOfWeek"]').prop('disabled')).toBe(true);
+            expect($fixture.find('.js-schedule-yearly [name="monthOccurrence"]').prop('disabled')).toBe(true);
+        });
+    });
 });
