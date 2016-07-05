@@ -30,6 +30,16 @@
 }).call(this, jQuery);
 
 (function ($) {
+	/*
+		10-19: Generic errors
+		20-29: Time-related errors
+		30-39: Daily-specific errors
+		40-49: Weekly-specific errors
+		50-59: Monthly-specific errors
+		60-69: Yearly-specific errors
+		70-79: Non-implementation errors
+		80	 : Unknown errors
+	*/
 	var errorList = [
 		{ id: 10, message: 'No such method %1' },
 		{ id: 11, message: 'Cannot call method %1 on jsCronUI prior to initialization' },
@@ -43,12 +53,14 @@
 		{ id: 51, message: 'Must provide one or more days' },
 		{ id: 52, message: 'Must select a day of the week' },
 		{ id: 53, message: 'Must select an occurrence' },
+		{ id: 54, message: 'Invalid days: %1' },		
 		{ id: 60, message: 'Could not understand yearly schedule options. %1' },
 		{ id: 61, message: 'A month and date or day of week selection is required. %1' },
 		{ id: 62, message: 'Must select one or more months' },
 		{ id: 63, message: 'Must provide one or more days' },
 		{ id: 64, message: 'Must choose a day of the week' },
 		{ id: 65, message: 'Must choose an occurrence' },
+		{ id: 66, message: 'Invalid days: %1' },
 		{ id: 70, message: 'Not implemented: %1.toEnglishString' },
 		{ id: 73, message: 'Not implemented: Monthly.%1.toEnglishString' },
 		{ id: 74, message: 'Not implemented: Yearly.%1.toEnglishString' },
@@ -410,6 +422,18 @@
 							if (currentState.days.length === 0 || $.inArray('', currentState.days) >= 0) {
 								throw new CronError(51);
 							}
+
+							var invalidDays = [];
+
+							$.each(currentState.days, function(index, value){
+								if (value > 31){
+									invalidDays.push(value);
+								}
+							});
+							if (invalidDays.length > 0){
+								throw new CronError(54, null, [invalidDays])
+							}
+
 							break;
 						case 'week':
 							if (!currentState.occurrence) {
@@ -434,6 +458,18 @@
 							if (currentState.days.length === 0 || $.inArray('', currentState.days) >= 0) {
 								throw new CronError(63);
 							}
+
+							var invalidDays = [];
+
+							$.each(currentState.days, function(index, value){
+								if (value > 31){
+									invalidDays.push(value);
+								}
+							});
+							if (invalidDays.length > 0){
+								throw new CronError(66, null, [invalidDays])
+							}
+
 							break;
 						case 'weekOccurrence':
 							if (!currentState.occurrence) {
@@ -543,10 +579,6 @@
 									post = clean.substring(clean.indexOf('-') + 1, clean.length);
 
 								return Math.floor(pre) + '-' + Math.floor(post);
-							}
-
-							if (clean > 31){
-								return '';
 							}
 
 							return Math.floor(clean).toString();
