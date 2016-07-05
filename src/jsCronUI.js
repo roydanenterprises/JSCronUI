@@ -430,8 +430,8 @@
 									invalidDays.push(value);
 								}
 							});
-							if (invalidDays.length > 0){
-								throw new CronError(54, null, [invalidDays])
+							if (invalidDays.length > 0) {
+								throw new CronError(54, null, [invalidDays.join(', ')]);
 							}
 
 							break;
@@ -466,8 +466,8 @@
 									invalidDays.push(value);
 								}
 							});
-							if (invalidDays.length > 0){
-								throw new CronError(66, null, [invalidDays])
+							if (invalidDays.length > 0) {
+								throw new CronError(66, null, [invalidDays.join(', ')]);
 							}
 
 							break;
