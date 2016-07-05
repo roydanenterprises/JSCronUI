@@ -310,14 +310,14 @@
 							break;
 						default:
 							if (validate) {
-								throw new CronError(31, currentState.selected);
+								throw new CronError(30, currentState.selected);
 							}
 					}
 					break;
 				case 'weekly':
 					dayOfWeek = currentState.days.join(',');
 					if (validate && !dayOfWeek) {
-						throw new CronError(41, currentState.pattern);
+						throw new CronError(40, currentState.pattern);
 					}
 					dayOfMonth = '?';
 					break;
@@ -335,7 +335,7 @@
 							break;
 						default:
 							if (validate) {
-								throw new CronError(51, currentState.selected);
+								throw new CronError(50, currentState.selected);
 							}
 					}
 					break;
@@ -351,7 +351,7 @@
 							break;
 						default:
 							if (validate) {
-								throw new CronError(61, currentState.selected);
+								throw new CronError(60, currentState.selected);
 							}
 					}
 					break;
