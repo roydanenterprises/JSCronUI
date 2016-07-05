@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [1.1.0] - 2016-07-05
 - Remove non-decimal characters from date input fields
 - Truncate decimal values in date input fields to just the integer component
 - Remove duplicate date values from date input fields (eg, '2,2,2,2' will result in '2')
@@ -20,5 +22,6 @@ All notable changes to this project will be documented in this file.
 
 
 
-[Unreleased]: https://github.com/roydanenterprises/JSCronUI/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/roydanenterprises/JSCronUI/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/roydanenterprises/JSCronUI/compare/v0.0.1...v1.1.0
 [1.0.0]: https://github.com/roydanenterprises/JSCronUI/compare/v0.0.1...v1.0.0
