@@ -44,18 +44,18 @@
 		{ id: 10, message: 'No such method %1' },
 		{ id: 11, message: 'Cannot call method %1 on jsCronUI prior to initialization' },
 		{ id: 12, message: 'Could not load schedule with expression: %1' },
-		{ id: 13, message: 'A schedule type is required. %1' },
+		{ id: 13, message: 'A schedule type is required.' },
 		{ id: 14, message: 'No template found or provided. Please provide a template or include the default template file.'},
 		{ id: 20, message: 'A time is required.' },
 		{ id: 30, message: 'A daily selection is required. %1' },
 		{ id: 40, message: 'A day of week selection is required. %1' },
-		{ id: 50, message: 'A date or day of week selection is required. %1' },
+		{ id: 50, message: 'A date or day of week selection is required.' },
 		{ id: 51, message: 'Must provide one or more days' },
 		{ id: 52, message: 'Must select a day of the week' },
 		{ id: 53, message: 'Must select an occurrence' },
 		{ id: 54, message: 'Invalid days: %1' },		
 		{ id: 60, message: 'Could not understand yearly schedule options. %1' },
-		{ id: 61, message: 'A month and date or day of week selection is required. %1' },
+		{ id: 61, message: 'A month and date or day of week selection is required.' },
 		{ id: 62, message: 'Must select one or more months' },
 		{ id: 63, message: 'Must provide one or more days' },
 		{ id: 64, message: 'Must choose a day of the week' },
@@ -351,7 +351,7 @@
 							break;
 						default:
 							if (validate) {
-								throw new CronError(60, currentState.selected);
+								throw new CronError(60, currentState.selected, ['']);
 							}
 					}
 					break;
