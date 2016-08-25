@@ -693,7 +693,8 @@
 				var monthOccurrenceSelects = self.$el.find('select[name="monthOccurrence"]').multipleSelect('getSelects');
 
 				//Check to see if they match - otherwise the updates get called recursively forever
-				if (!($(thisSelects).not(monthOccurrenceSelects).length === 0 && $(monthOccurrenceSelects).not(thisSelects).length === 0)) {
+				if (!(thisSelects.filter(function (x) { return monthOccurrenceSelects.indexOf(x) < 0 }).length === 0 &&
+					monthOccurrenceSelects.filter(function (x) { return thisSelects.indexOf(x) < 0 }).length === 0)) {
 					self.$el.find('select[name="monthOccurrence"]').multipleSelect('setSelects', $(this).multipleSelect('getSelects'));
 				}
 			});
@@ -703,7 +704,8 @@
 				var specificDaySelects = self.$el.find('select[name="monthSpecificDay"]').multipleSelect('getSelects');
 
 				//Check to see if they match - otherwise the updates get called recursively forever
-				if (!($(thisSelects).not(specificDaySelects).length === 0 && $(specificDaySelects).not(thisSelects).length === 0)) {
+				if (!(thisSelects.filter(function (x) { return specificDaySelects.indexOf(x) < 0 }).length === 0 &&
+					specificDaySelects.filter(function (x) { return thisSelects.indexOf(x) < 0 }).length === 0)) {
 					self.$el.find('select[name="monthSpecificDay"]').multipleSelect('setSelects', $(this).multipleSelect('getSelects'));
 				}
 			});

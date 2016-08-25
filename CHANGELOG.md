@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 - Remove stray replacement characters from messages that don't need it
+- Update checking of month dropdowns to use correct jQuery API calls
 
 ## [1.1.0] - 2016-07-05
 - Remove non-decimal characters from date input fields
