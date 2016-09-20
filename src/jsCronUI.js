@@ -642,10 +642,6 @@
 					currentState.occurrence = self.$el.find('[name="weekOccurrence"]').val();
 					currentState.dayOfWeek = self.$el.find('[name="dayOfWeek"]').val();
 					currentState.days = self.$el.find('[name="date"]').val().split(/[\s,]+/);
-
-					self.$el.find('.js-schedule-monthly [name="weekOccurrence"]').prop('disabled', currentState.selected !== 'week');
-					self.$el.find('.js-schedule-monthly [name="dayOfWeek"]').prop('disabled', currentState.selected !== 'week');
-					self.$el.find('.js-schedule-monthly [name="date"]').prop('disabled', currentState.selected !== 'date');
 					break;
 				case 'yearly':
 					currentState.selected = self.$el.find('[name="yearPattern"]:checked').val();
@@ -653,14 +649,6 @@
 					currentState.days = self.$el.find('[name="dayOfMonth"]').val().split(/[\s,]+/).sort(function (a, b) { return (parseInt(b) < parseInt(a)) });
 					currentState.occurrence = self.$el.find('[name="weekOccurrence"]').val();
 					currentState.dayOfWeek = self.$el.find('[name="dayOfWeek"]').val();
-
-					self.$el.find('.js-schedule-yearly [name="monthSpecificDay"]').prop('disabled', currentState.selected !== 'specificDay');
-					self.$el.find('.js-schedule-yearly [name="monthSpecificDay"]').multipleSelect(currentState.selected === 'specificDay' ? "enable" : "disable");
-					self.$el.find('.js-schedule-yearly [name="dayOfMonth"]').prop('disabled', currentState.selected !== 'specificDay');
-					self.$el.find('.js-schedule-yearly [name="weekOccurrence"]').prop('disabled', currentState.selected !== 'weekOccurrence');
-					self.$el.find('.js-schedule-yearly [name="dayOfWeek"]').prop('disabled', currentState.selected !== 'weekOccurrence');
-					self.$el.find('.js-schedule-yearly [name="monthOccurrence"]').prop('disabled', currentState.selected !== 'weekOccurrence');
-					self.$el.find('.js-schedule-yearly [name="monthOccurrence"]').multipleSelect(currentState.selected === 'weekOccurrence' ? "enable" : "disable");
 					break;
 			}
 
