@@ -3,8 +3,13 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [1.1.1] - 2016-09-20
 - Remove stray replacement characters from messages that don't need it
 - Update checking of month dropdowns to use correct jQuery API calls
+- Selections no longer syncronize across sections
+- Options are no longer disabled and enabled when the relevant sub-type is selected
+- Sub-types are automatically selected when a property relevant to them changes
 
 ## [1.1.0] - 2016-07-05
 - Remove non-decimal characters from date input fields
@@ -24,6 +29,7 @@ All notable changes to this project will be documented in this file.
 
 
 
-[Unreleased]: https://github.com/roydanenterprises/JSCronUI/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/roydanenterprises/JSCronUI/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/roydanenterprises/JSCronUI/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/roydanenterprises/JSCronUI/compare/v0.0.1...v1.1.0
 [1.0.0]: https://github.com/roydanenterprises/JSCronUI/compare/v0.0.1...v1.0.0
