@@ -703,6 +703,37 @@
 			self.$el.find('input[name="time"]').on('blur', function () {
 				evaluate(self.$el.find('input[name="time"]'));
 			});
+
+			//Wire events to auto-change the subtype when fields change
+			self.$el.find('.js-schedule-monthly').find('select[name="dayOfWeek"],select[name="weekOccurrence"]').on('change', function(){
+				if (currentState.selected !== 'week'){
+					self.$el.find('[name="monthlyPattern"][value="week"]').prop('checked', true).change();
+				}
+			});
+
+			self.$el.find('.js-schedule-monthly input[name="date"]').on('keypress', function(){
+				if (currentState.selected !== 'date'){
+					self.$el.find('[name="monthlyPattern"][value="date"]').prop('checked', true).change();
+				}
+			});
+
+			self.$el.find('.js-schedule-yearly').find('select[name="monthOccurrence"],select[name="dayOfWeek"],select[name="weekOccurrence"]').on('change', function () {
+				if (currentState.selected !== 'weekOccurrence'){
+					self.$el.find('[name="yearPattern"][value="weekOccurrence"]').prop('checked', true).change();
+				}
+			});
+
+			self.$el.find('.js-schedule-yearly').find('select[name="monthSpecificDay"]').on('change', function () {
+				if (currentState.selected !== 'specificDay'){
+					self.$el.find('[name="yearPattern"][value="specificDay"]').prop('checked', true).change();
+				}
+			});
+
+			self.$el.find('.js-schedule-yearly input[name="dayOfMonth"]').on('keypress', function(){
+				if (currentState.selected !== 'specificDay'){
+					self.$el.find('[name="yearPattern"][value="specificDay"]').prop('checked', true).change();
+				}
+			});
 		};
 
 		this.toEnglishString = function () {
