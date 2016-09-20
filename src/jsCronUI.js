@@ -688,28 +688,6 @@
 				allSelected: 'Every month'
 			});
 
-			self.$el.find('select[name="monthSpecificDay"]').on('change', function () {
-				var thisSelects = $(this).multipleSelect('getSelects');
-				var monthOccurrenceSelects = self.$el.find('select[name="monthOccurrence"]').multipleSelect('getSelects');
-
-				//Check to see if they match - otherwise the updates get called recursively forever
-				if (!(thisSelects.filter(function (x) { return monthOccurrenceSelects.indexOf(x) < 0 }).length === 0 &&
-					monthOccurrenceSelects.filter(function (x) { return thisSelects.indexOf(x) < 0 }).length === 0)) {
-					self.$el.find('select[name="monthOccurrence"]').multipleSelect('setSelects', $(this).multipleSelect('getSelects'));
-				}
-			});
-
-			self.$el.find('select[name="monthOccurrence"]').on('change', function () {
-				var thisSelects = $(this).multipleSelect('getSelects');
-				var specificDaySelects = self.$el.find('select[name="monthSpecificDay"]').multipleSelect('getSelects');
-
-				//Check to see if they match - otherwise the updates get called recursively forever
-				if (!(thisSelects.filter(function (x) { return specificDaySelects.indexOf(x) < 0 }).length === 0 &&
-					specificDaySelects.filter(function (x) { return thisSelects.indexOf(x) < 0 }).length === 0)) {
-					self.$el.find('select[name="monthSpecificDay"]').multipleSelect('setSelects', $(this).multipleSelect('getSelects'));
-				}
-			});
-
 			self.$el.find('[name="ScheduleType"]').on('change', function () {
 				self.$el.find('.c-schedule-options').show();
 				var scr = '.js-schedule-' + $(this).val();
