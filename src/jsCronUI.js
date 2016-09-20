@@ -607,17 +607,17 @@
 					});
 					break;
 				case 'monthly':
-					self.$el.find('[name="monthlyPattern"][value="' + currentState.selected + '"]').prop('checked', true).change();
-					self.$el.find('[name="date"]').val(currentState.days.join()).change();
-					self.$el.find('[name="weekOccurrence"]').val(currentState.occurrence).change();
-					self.$el.find('[name="dayOfWeek"]').val(currentState.dayOfWeek).change();
+					self.$el.find('.js-schedule-monthly [name="monthlyPattern"][value="' + currentState.selected + '"]').prop('checked', true).change();
+					self.$el.find('.js-schedule-monthly [name="date"]').val(currentState.days.join()).change();
+					self.$el.find('.js-schedule-monthly [name="weekOccurrence"]').val(currentState.occurrence).change();
+					self.$el.find('.js-schedule-monthly [name="dayOfWeek"]').val(currentState.dayOfWeek).change();
 					break;
 				case 'yearly':
-					self.$el.find('[name="yearPattern"][value="' + currentState.selected + '"]').prop('checked', true).change();
-					self.$el.find('[name="monthSpecificDay"]').multipleSelect('setSelects', currentState.months);
-					self.$el.find('[name="dayOfMonth"]').val(currentState.days.join()).change();
-					self.$el.find('[name="dayOfWeek"]').val(currentState.dayOfWeek).change();
-					self.$el.find('[name="weekOccurrence"]').val(currentState.occurrence).change();
+					self.$el.find('.js-schedule-yearly [name="yearPattern"][value="' + currentState.selected + '"]').prop('checked', true).change();
+					self.$el.find('.js-schedule-yearly [name="monthSpecificDay"]').multipleSelect('setSelects', currentState.months);
+					self.$el.find('.js-schedule-yearly [name="dayOfMonth"]').val(currentState.days.join()).change();
+					self.$el.find('.js-schedule-yearly [name="dayOfWeek"]').val(currentState.dayOfWeek).change();
+					self.$el.find('.js-schedule-yearly [name="weekOccurrence"]').val(currentState.occurrence).change();
 					break;
 			}
 		};
@@ -638,17 +638,17 @@
 					currentState.days = self.$el.find('div[name="weeklyDays"] input:checkbox:checked').map(function () { return this.value; }).get();
 					break;
 				case 'monthly':
-					currentState.selected = self.$el.find('[name="monthlyPattern"]:checked').val();
-					currentState.occurrence = self.$el.find('[name="weekOccurrence"]').val();
-					currentState.dayOfWeek = self.$el.find('[name="dayOfWeek"]').val();
-					currentState.days = self.$el.find('[name="date"]').val().split(/[\s,]+/);
+					currentState.selected = self.$el.find('.js-schedule-monthly [name="monthlyPattern"]:checked').val();
+					currentState.occurrence = self.$el.find('.js-schedule-monthly [name="weekOccurrence"]').val();
+					currentState.dayOfWeek = self.$el.find('.js-schedule-monthly [name="dayOfWeek"]').val();
+					currentState.days = self.$el.find('.js-schedule-monthly [name="date"]').val().split(/[\s,]+/);
 					break;
 				case 'yearly':
-					currentState.selected = self.$el.find('[name="yearPattern"]:checked').val();
-					currentState.months = self.$el.find('[name="monthSpecificDay"]').multipleSelect('getSelects');
-					currentState.days = self.$el.find('[name="dayOfMonth"]').val().split(/[\s,]+/).sort(function (a, b) { return (parseInt(b) < parseInt(a)) });
-					currentState.occurrence = self.$el.find('[name="weekOccurrence"]').val();
-					currentState.dayOfWeek = self.$el.find('[name="dayOfWeek"]').val();
+					currentState.selected = self.$el.find('.js-schedule-yearly [name="yearPattern"]:checked').val();
+					currentState.months = self.$el.find(currentState.selected === 'specificDay' ? '.js-schedule-yearly [name="monthSpecificDay"]' : '.js-schedule-yearly [name="monthOccurrence"]').multipleSelect('getSelects');
+					currentState.days = self.$el.find('.js-schedule-yearly [name="dayOfMonth"]').val().split(/[\s,]+/).sort(function (a, b) { return (parseInt(b) < parseInt(a)) });
+					currentState.occurrence = self.$el.find('.js-schedule-yearly [name="weekOccurrence"]').val();
+					currentState.dayOfWeek = self.$el.find('.js-schedule-yearly [name="dayOfWeek"]').val();
 					break;
 			}
 
@@ -683,23 +683,7 @@
 				self.$el.find(scr).show();
 			});
 
-			//synchronize inputs that have the same name across all options
-			self.$el.find('[name$="Frequency"]').on('change', function () {
-				self.$el.find('[name$="Frequency"]').val($(this).val());
-			});
-
-			self.$el.find('[name="weekOccurrence"]').on('change', function () {
-				self.$el.find('[name="weekOccurrence"]').val($(this).val());
-			});
-
-			self.$el.find('[name="dayOfWeek"]').on('change', function () {
-				self.$el.find('[name="dayOfWeek"]').val($(this).val());
-			});
-
-			self.$el.find('[name="month"]').on('change', function () {
-				self.$el.find('[name="month"]').val($(this).val());
-			});
-
+			//auto-evaluate the time entered on blur
 			self.$el.find('input[name="time"]').on('blur', function () {
 				evaluate(self.$el.find('input[name="time"]'));
 			});
