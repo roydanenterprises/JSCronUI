@@ -802,6 +802,21 @@
 				return toAltValues(occurrenceList, values);
 			};
 
+			var toEnglishDaySuffix = function (value){
+				var suffix = 'th';
+				switch (value + ''){
+					case '1': case '21': case '31': suffix = 'st'; break;
+					case '2': case '22': 						suffix = 'nd'; break;
+					case '3': case '23':            suffix = 'rd'; break;
+				}
+
+				return value + suffix;
+			};
+
+			var numericSort = function(a, b){
+				return a - b;
+			};
+
 			switch (currentState.pattern) {
 				case 'daily':
 					result = 'Every ' + (currentState.selected === 'weekday' ? 'week' : '') + 'day at ' + timeString;
@@ -813,7 +828,7 @@
 					result = 'Every month on the ';
 					switch (currentState.selected) {
 						case 'date':
-							result += currentState.days.join(', ') + ' at ' + timeString;
+							result += $.map(currentState.days, toEnglishDaySuffix).join(', ') + ' at ' + timeString;
 							break;
 						case 'week':
 							if (currentState.occurrence !== '') {
@@ -837,7 +852,7 @@
 					result = 'Every year on ';
 					switch (currentState.selected) {
 						case 'specificDay':
-							result += toEnglishMonths(currentState.months).join(', ') + ' ' + currentState.days.join(', ') + ' at ' + timeString;
+							result += toEnglishMonths(currentState.months).join(', ') + ' ' + $.map(currentState.days, toEnglishDaySuffix).join(', ') + ' at ' + timeString;
 							break;
 						case 'weekOccurrence':
 							result += 'the ';
