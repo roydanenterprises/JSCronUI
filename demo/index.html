@@ -23,21 +23,22 @@
 
       $(function(){
 
-        var $s = $('#Schedule');
+        var $s = $('#Schedule'),
+            $e = $('#Error');
 
         function updateDebug(){
           try{
-            $('#Error').text('');
+            $e.text('');
             $('#debug').val($s.jsCronUI('getCron', true));
           }
           catch(e){
-            $('#Error').text(e.message);
+            $e.text(e.message);
           }
         }
 
         $('.init').on('click', function(){
           $s.jsCronUI({});
-          updateDebug();
+          //updateDebug();
         });
 
         $('.read').on('click', function(){
