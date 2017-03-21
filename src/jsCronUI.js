@@ -516,7 +516,7 @@
 				sMinutes = '0' + sMinutes;
 
 			return sHours + ':' + sMinutes + ':00';
-		}
+		};
 
 		function timeSpanToString (val) {
 			if (!val)
@@ -538,7 +538,7 @@
 				hours = 12;
 
 			return hours + ':' + (minutes < 10 ? '0' + minutes : minutes) + ' ' + ampm.toUpperCase();
-		}
+		};
 
 		function evaluate ($element) {
 			var value = $element.val();
@@ -551,7 +551,7 @@
 			}
 			var result = timeSpanToString(military);
 			$element.attr('data-time', military).val(result).change();
-		}
+		};
 
 		function cleanInputs () {
 			var dayCleanList = ['[name="date"]', '[name="dayOfMonth"]'];
@@ -583,7 +583,7 @@
 					monthlyDays.val(monthlyUnique.join()).change();
 				}
 			});
-		}
+		};
 
 		function updateDom () {
 			self.$el.find('.c-schedule-type input:radio[value="' + currentState.pattern + '"]').prop('checked', true).change();
@@ -620,6 +620,22 @@
 					}
 					break;
 			}
+		};
+
+		function formatArray(arr){
+			if (arr.length === 1){
+				return arr[0];
+			}
+
+			if (arr.length === 2){
+				return arr.join(' and ');
+			}
+
+			if (arr.length > 2){
+				return arr.slice(0, -1).join(', ') + ' and ' + arr.slice(-1);
+			}
+
+			return '';
 		};
 
 		function updateFromDom () {
@@ -803,6 +819,11 @@
 			};
 
 			var toEnglishDaySuffix = function (value){
+				if (value.indexOf('-') > 0){
+					var days = $.map(value.split('-'), toEnglishDaySuffix);
+					return days.join('-');
+				}
+
 				var suffix = 'th';
 				switch (value + ''){
 					case '1': case '21': case '31': suffix = 'st'; break;
@@ -822,23 +843,23 @@
 					result = 'Every ' + (currentState.selected === 'weekday' ? 'week' : '') + 'day at ' + timeString;
 					break;
 				case 'weekly':
-					result = 'Every week on ' + toEnglishDays(currentState.days).join(', ') + ' at ' + timeString;
+					result = 'Every week on ' + formatArray(toEnglishDays(currentState.days)) + ' at ' + timeString;
 					break;
 				case 'monthly':
 					result = 'Every month on the ';
 					switch (currentState.selected) {
 						case 'date':
-							result += $.map(currentState.days, toEnglishDaySuffix).join(', ') + ' at ' + timeString;
+							result += formatArray($.map(currentState.days, toEnglishDaySuffix)) + ' at ' + timeString;
 							break;
 						case 'week':
 							if (currentState.occurrence !== '') {
 								if (currentState.occurrence === 'L') {
 									result += 'last';
 								} else {
-									result += toEnglishOccurrence(currentState.occurrence.split('#')).join('');
+									result += toEnglishOccurrence(currentState.occurrence.split('#'));
 								}
 
-								result += ' ' + toEnglishDays(currentState.dayOfWeek).join('') + ' at ' + timeString;
+								result += ' ' + toEnglishDays(currentState.dayOfWeek) + ' at ' + timeString;
 							}
 							break;
 						case 'last':
@@ -852,17 +873,17 @@
 					result = 'Every year on ';
 					switch (currentState.selected) {
 						case 'specificDay':
-							result += toEnglishMonths(currentState.months).join(', ') + ' ' + $.map(currentState.days, toEnglishDaySuffix).join(', ') + ' at ' + timeString;
+							result += formatArray(toEnglishMonths(currentState.months)) + ' ' + formatArray($.map(currentState.days, toEnglishDaySuffix)) + ' at ' + timeString;
 							break;
 						case 'weekOccurrence':
 							result += 'the ';
 							if (currentState.occurrence === 'L') {
 								result += 'last ';
 							} else {
-								result += toEnglishOccurrence(currentState.occurrence.split('#')).join('') + ' ';
+								result += toEnglishOccurrence(currentState.occurrence.split('#')) + ' ';
 							}
 
-							result += toEnglishDays(currentState.dayOfWeek).join('') + ' of ' + toEnglishMonths(currentState.months).join(', ') + ' at ' + timeString;
+							result += toEnglishDays(currentState.dayOfWeek) + ' of ' + formatArray(toEnglishMonths(currentState.months)) + ' at ' + timeString;
 							break;
 						default:
 							throw new CronError(74, currentState.selected, [currentState.selected]);
