@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.2] - 2017-03-21
+- Include day suffixes (`th`, `st`, `rd`, `nd`) when displaying days in the English description
+- Update the demo to give all the information available from the plugin
+- Properly sort the order of the days for monthly types
+- Improve the overall English description for most types so they ready more naturally
+- Remove unused replacement characters in error messages
+- Standardize error messages to have the same format
+
 ## [1.1.1] - 2016-09-20
 - Remove stray replacement characters from messages that don't need it
 - Update checking of month dropdowns to use correct jQuery API calls
@@ -29,7 +37,8 @@ All notable changes to this project will be documented in this file.
 
 
 
-[Unreleased]: https://github.com/roydanenterprises/JSCronUI/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/roydanenterprises/JSCronUI/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/roydanenterprises/JSCronUI/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/roydanenterprises/JSCronUI/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/roydanenterprises/JSCronUI/compare/v0.0.1...v1.1.0
 [1.0.0]: https://github.com/roydanenterprises/JSCronUI/compare/v0.0.1...v1.0.0
