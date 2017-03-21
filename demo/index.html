@@ -14,11 +14,26 @@
   </head>
   <body>
     <h1>jsCronUI</h1>
-    <h3>Init Schedule Before Doing Anything. This proves nothing is wired to document.ready</h3>
-    <button class="init">Okay already, get on with it!</button>  Debug <input type="text" id="debug" readonly/> <button class="read">Read Cron</button>
+    <div id="init">
+      <h3>Init Schedule Before Doing Anything. This proves nothing is wired to document.ready</h3>
+      <button class="init">Okay already, get on with it!</button>
+    </div>
+    <div id="Info" style="padding-top:10px;margin-left:20px;display:none">
+      <button class="read">Read Cron</button>
+      <table border=1>
+        <tr>
+          <td>CRON String</td><td><span id="cron"></span></td>
+        </tr>
+        <tr>
+          <td>English Description</td><td><span id="description"></span></td>
+        </tr>
+        <tr>
+          <td>Error Message</td><td><span id="error"></span></td>
+        </tr>
+      </table>
+    </div>
 
     <div id="Schedule" class="c-schedule"></div>
-
   <script>
 
       $(function(){
@@ -26,12 +41,22 @@
         var $s = $('#Schedule');
 
         function updateDebug(){
-          $('#debug').val($s.jsCronUI('getCron'));
-       }
+          try{
+            $('#error').text('');
+            $('#cron').text($s.jsCronUI('getCron', true));
+            $('#description').text($s.jsCronUI('toEnglishString'));
+          }
+          catch(e){
+            $('#error').text(e.message);
+            $('#cron').text('');
+            $('#description').text('');
+          }
+        }
 
         $('.init').on('click', function(){
           $s.jsCronUI({});
-          updateDebug();
+          $('#init').hide();
+          $('#Info').show();
         });
 
         $('.read').on('click', function(){

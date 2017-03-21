@@ -41,40 +41,39 @@
 		80	 : Unknown errors
 	*/
 	var errorList = [
-		{ id: 10, message: 'No such method %1' },
-		{ id: 11, message: 'Cannot call method %1 on jsCronUI prior to initialization' },
-		{ id: 12, message: 'Could not load schedule with expression: %1' },
+		{ id: 10, message: 'No such method %1.' },
+		{ id: 11, message: 'Cannot call method %1 on jsCronUI prior to initialization.' },
+		{ id: 12, message: 'Could not load schedule with expression: %1.' },
 		{ id: 13, message: 'A schedule type is required.' },
-		{ id: 14, message: 'No template found or provided. Please provide a template or include the default template file.'},
+		{ id: 14, message: 'No template found or provided. Please provide a template or include the default template file.' },
 		{ id: 20, message: 'A time is required.' },
-		{ id: 30, message: 'A daily selection is required. %1' },
-		{ id: 40, message: 'A day of week selection is required. %1' },
+		{ id: 30, message: 'A daily or weekday repetition pattern selection is required.' },
+		{ id: 40, message: 'One or more days of the week are required.' },
 		{ id: 50, message: 'A date or day of week selection is required.' },
-		{ id: 51, message: 'Must provide one or more days' },
-		{ id: 52, message: 'Must select a day of the week' },
-		{ id: 53, message: 'Must select an occurrence' },
-		{ id: 54, message: 'Invalid days: %1' },		
-		{ id: 60, message: 'Could not understand yearly schedule options. %1' },
+		{ id: 51, message: 'Must provide one or more days.' },
+		{ id: 52, message: 'Must select a day of the week.' },
+		{ id: 53, message: 'Must select an occurrence.' },
+		{ id: 54, message: 'Invalid days: %1.' },
+		{ id: 60, message: 'Could not understand yearly schedule options: %1.' },
 		{ id: 61, message: 'A month and date or day of week selection is required.' },
-		{ id: 62, message: 'Must select one or more months' },
-		{ id: 63, message: 'Must provide one or more days' },
-		{ id: 64, message: 'Must choose a day of the week' },
-		{ id: 65, message: 'Must choose an occurrence' },
-		{ id: 66, message: 'Invalid days: %1' },
-		{ id: 70, message: 'Not implemented: %1.toEnglishString' },
-		{ id: 73, message: 'Not implemented: Monthly.%1.toEnglishString' },
-		{ id: 74, message: 'Not implemented: Yearly.%1.toEnglishString' },
-		{ id: 80, message: 'Unknown error occurred inside jsCronUI library: %1' }
+		{ id: 62, message: 'Must select one or more months.' },
+		{ id: 63, message: 'Must provide one or more days.' },
+		{ id: 64, message: 'Must choose a day of the week.' },
+		{ id: 65, message: 'Must choose an occurrence.' },
+		{ id: 66, message: 'Invalid days: %1.' },
+		{ id: 70, message: 'Not implemented: %1.toEnglishString.' },
+		{ id: 73, message: 'Not implemented: Monthly.%1.toEnglishString.' },
+		{ id: 74, message: 'Not implemented: Yearly.%1.toEnglishString.' },
+		{ id: 80, message: 'Unknown error occurred inside jsCronUI library: %1.' }
 	];
-	
+
 	function CronError(number, additionalData, substitutions) {
 		this.number = number;
-		this.message = errorList.filter(function(error){
+		this.message = errorList.filter(function (error) {
 			return error.id === number;
 		})[0].message;
 
-		if (substitutions)
-		{
+		if (substitutions) {
 			for (var i = substitutions.length - 1; i >= 0; i--) {
 				this.message = this.message.replace(new RegExp('%' + (i + 1), 'g'), substitutions[i]);
 			}
@@ -91,11 +90,11 @@
 }).call(this, jQuery);
 
 (function ($) {
-	function jsCronUI(settings, $element) {
+	function jsCronUI (settings, $element) {
 		var self = this;
 		self.$el = $($element);
 
-		if (settings){
+		if (settings) {
 			self.$bindTo = settings.bindTo || null;
 			self.initialValue = settings.initialValue;
 		}
@@ -127,7 +126,7 @@
 			disableUiUpdates = false;
 		};
 
-		function resetDom() {
+		function resetDom () {
 			self.$el.find('input:radio,input:checkbox').prop('checked', false).change();
 			self.$el.find('input:text').val('').change();
 			hideAll();
@@ -138,14 +137,13 @@
 			updateDom();
 		}
 
-		function init() {
+		function init () {
 
 			if (settings && (!settings.container || !settings.container instanceof jQuery)) {
-				
+
 				if ($.fn.jsCronUI.template) {
 					self.$el.append($.fn.jsCronUI.template());
-				}
-				else {
+				} else {
 					throw new CronError(14);
 				}
 			}
@@ -156,8 +154,6 @@
 				self.setCron(self.initialValue);
 			}
 
-			updateDom();
-
 			self.$el.find('div input,select').on('change', function () {
 				cleanInputs();
 				updateFromDom();
@@ -165,7 +161,7 @@
 		};
 
 		this.setCron = function (expression) {
-			function pad(string, max) {
+			function pad (string, max) {
 				string = string.toString();
 
 				return string.length < max ? pad('0' + string, max) : string;
@@ -202,83 +198,71 @@
 					//Specific day of the month
 					currentState.selected = 'specificDay';
 					currentState.days = values[3].split(',');
-				}
-				else if (values[5].indexOf('#') > 0) {
+				} else if (values[5].indexOf('#') > 0) {
 					//Specific occurrence of the month
 					currentState.selected = 'weekOccurrence';
 					var occArr = values[5].split('#');
 
 					currentState.dayOfWeek = occArr[0];
 					currentState.occurrence = '#' + occArr[1];
-				}
-				else if (values[5].indexOf('L') > 0) {
+				} else if (values[5].indexOf('L') > 0) {
 					//Specific occurrence of the month
 					currentState.selected = 'weekOccurrence';
 
 					currentState.occurrence = 'L';
 					currentState.dayOfWeek = values[5].split('L')[0];
-				}
-				else {
+				} else {
 					throw new CronError(60, expression, [expression]);
 				}
-			}
-			else if (values[3] === '*' || values[5] === '*') {
+			} else if (values[3] === '*' || values[5] === '*') {
 				//Expression is daily - every day
 				currentState.pattern = 'daily';
 				currentState.selected = 'daily';
-			}
-			else if (values[5] === '2-6' || values[5] === '2,3,4,5,6') {
+			} else if (values[5] === '2-6' || values[5] === '2,3,4,5,6') {
 				//Expression is daily - weekdays
 				currentState.pattern = 'daily';
 				currentState.selected = 'weekday';
-			}
-			else if (values[5].indexOf('#') === -1 && values[5].indexOf('L') === -1 && values[5] !== '?') {
+			} else if (values[5].indexOf('#') === -1 && values[5].indexOf('L') === -1 && values[5] !== '?') {
 				//Expression is weekly
 				currentState.pattern = 'weekly';
 				if (values[5].indexOf('-') > 0) {
 					inDays = values[5].split('-');
 					days = [];
-					for (i = parseInt(inDays[0]) ; i <= parseInt(inDays[1]) ; i++) {
+					for (i = parseInt(inDays[0]); i <= parseInt(inDays[1]); i++) {
 						days.push(i);
 					};
 					currentState.days = days;
-				}
-				else {
+				} else {
 					currentState.days = values[5].split(',');
 				}
-			}
-			else {
+			} else {
 				//Expression is monthly
 				currentState.pattern = 'monthly';
 
 				if (values[3] === 'L') {
 					currentState.selected = 'last';
-				}
-				else if (values[5].indexOf('#') > 0) {
+				} else if (values[5].indexOf('#') > 0) {
 					var weekdays = values[5].split('#');
 
 					currentState.selected = 'week';
 					currentState.dayOfWeek = weekdays[0];
 					currentState.occurrence = '#' + weekdays[1];
-				}
-				else if (values[5].indexOf('L') > 0) {
+				} else if (values[5].indexOf('L') > 0) {
 					var weekday = values[5].split('L')[0];
 
 					currentState.selected = 'week';
 					currentState.dayOfWeek = weekday;
 					currentState.occurrence = 'L';
-				}
-				else {
+				} else {
 					currentState.selected = 'date';
 					if (values[3].indexOf('-') > 0) {
 						inDays = values[3].split('-');
 						days = [];
-						for (i = parseInt(inDays[0]) ; i <= parseInt(inDays[1]) ; i++) {
+						for (i = parseInt(inDays[0]); i <= parseInt(inDays[1]); i++) {
 							days.push(i);
 						};
 						currentState.days = days;
-					}
-					else {
+					} else {
 						currentState.days = values[3].split(',');
 					}
 
@@ -292,11 +276,11 @@
 
 		this.getCron = function (validate) {
 			var minute = '*',
-			hour = '*',
-			dayOfMonth = '*',
-			month = '*',
-			year = '*',
-			dayOfWeek = '?';
+				hour = '*',
+				dayOfMonth = '*',
+				month = '*',
+				year = '*',
+				dayOfWeek = '?';
 
 			switch (currentState.pattern) {
 				case 'daily':
@@ -351,7 +335,7 @@
 							break;
 						default:
 							if (validate) {
-								throw new CronError(60, currentState.selected, ['']);
+								throw new CronError(61, currentState.selected);
 							}
 					}
 					break;
@@ -390,7 +374,7 @@
 			return cron.join(' ');
 		};
 
-		function validateState() {
+		function validateState () {
 			//Check for errors in the state of the current model
 			if (!currentState.time) {
 				throw new CronError(20);
@@ -425,8 +409,8 @@
 
 							var invalidDays = [];
 
-							$.each(currentState.days, function(index, value){
-								if (value > 31){
+							$.each(currentState.days, function (index, value) {
+								if (value > 31) {
 									invalidDays.push(value);
 								}
 							});
@@ -461,8 +445,8 @@
 
 							var invalidDays = [];
 
-							$.each(currentState.days, function(index, value){
-								if (value > 31){
+							$.each(currentState.days, function (index, value) {
+								if (value > 31) {
 									invalidDays.push(value);
 								}
 							});
@@ -495,13 +479,15 @@
 			return true;
 		};
 
-		function stringToTimeSpan(val) {
-			if (!val) return undefined;
+		function stringToTimeSpan (val) {
+			if (!val)
+				return undefined;
 
 			var AMtoPMthreshold = 8;
 
 			var time = val.trim().match(/^(\d{1,2})(?::)*([0-5][0-9])?\s*((P|A)(?:M)?)?$/i);
-			if (time === null) return null;
+			if (time === null)
+				return null;
 
 			var hours = Number(time[1]);
 			var minutes = time[2] ? Number(time[2]) : 0;
@@ -509,29 +495,36 @@
 
 			//Return invalid if military time with AM/PM qualifier.
 			if ((hours > 12 && ampm) ||
-				hours > 23) return null;
+				hours > 23)
+				return null;
 
 			//consider threshold.
 			if (!ampm && hours < 12 && hours > 0 && (hours < AMtoPMthreshold && time[1].length === 1))
 				hours = hours + 12;
 
 			//if PM and hours are between 1 and 11.
-			if (hours < 12 && hours > 0 && ampm && ampm.toUpperCase() === 'P') hours = hours + 12;
-			if (hours === 12 && ampm && ampm.toUpperCase() === 'A') hours = 0;
+			if (hours < 12 && hours > 0 && ampm && ampm.toUpperCase() === 'P')
+				hours = hours + 12;
+			if (hours === 12 && ampm && ampm.toUpperCase() === 'A')
+				hours = 0;
 
 			var sHours = hours.toString();
 			var sMinutes = minutes.toString();
-			if (hours < 10) sHours = '0' + sHours;
-			if (minutes < 10 && minutes !== '00') sMinutes = '0' + sMinutes;
+			if (hours < 10)
+				sHours = '0' + sHours;
+			if (minutes < 10 && minutes !== '00')
+				sMinutes = '0' + sMinutes;
 
 			return sHours + ':' + sMinutes + ':00';
-		}
+		};
 
-		function timeSpanToString(val) {
-			if (!val) return undefined;
+		function timeSpanToString (val) {
+			if (!val)
+				return undefined;
 
 			var time = val.trim().match(/^(\d{2})(?::)(\d{2})(?::)?(\d{2})?$/i);
-			if (time === null) return null;
+			if (time === null)
+				return null;
 
 			var hours = Number(time[1]);
 			var minutes = Number(time[2]);
@@ -545,9 +538,9 @@
 				hours = 12;
 
 			return hours + ':' + (minutes < 10 ? '0' + minutes : minutes) + ' ' + ampm.toUpperCase();
-		}
+		};
 
-		function evaluate($element) {
+		function evaluate ($element) {
 			var value = $element.val();
 
 			var military = '';
@@ -558,41 +551,41 @@
 			}
 			var result = timeSpanToString(military);
 			$element.attr('data-time', military).val(result).change();
-		}
+		};
 
-		function cleanInputs(){
+		function cleanInputs () {
 			var dayCleanList = ['[name="date"]', '[name="dayOfMonth"]'];
 
-			$.each(dayCleanList, function(idx, obj){
+			$.each(dayCleanList, function (idx, obj) {
 				var regex = /[^\d\.\-]/g,
 					monthlyDays = self.$el.find(obj),
 					monthlySplit = monthlyDays.val().split(/[\s,]+/),
-					monthlyUnique = monthlySplit.map(function(value){	
-							if (!value){
-								return value;
-							}
+					monthlyUnique = monthlySplit.map(function (value) {
+						if (!value) {
+							return value;
+						}
 
-							var clean = value.replace(regex, '');
+						var clean = value.replace(regex, '');
 
-							if (value.indexOf('-') >= 0){
-								var pre = clean.substring(0, clean.indexOf('-')),
-									post = clean.substring(clean.indexOf('-') + 1, clean.length);
+						if (value.indexOf('-') >= 0) {
+							var pre = clean.substring(0, clean.indexOf('-')),
+								post = clean.substring(clean.indexOf('-') + 1, clean.length);
 
-								return Math.floor(pre) + '-' + Math.floor(post);
-							}
+							return Math.floor(pre) + '-' + Math.floor(post);
+						}
 
-							return Math.floor(clean).toString();
-						}).filter(function(item, index, array){
-							return array.length == 0 || (item && index === array.indexOf(item));
-						});
+						return Math.floor(clean).toString();
+					}).filter(function (item, index, array) {
+						return array.length == 0 || (item && index === array.indexOf(item));
+					});
 
-				if (monthlyDays.val() && monthlySplit.toString() !== monthlyUnique.toString()){
+				if (monthlyDays.val() && monthlySplit.toString() !== monthlyUnique.toString()) {
 					monthlyDays.val(monthlyUnique.join()).change();
 				}
 			});
-		}
+		};
 
-		function updateDom() {
+		function updateDom () {
 			self.$el.find('.c-schedule-type input:radio[value="' + currentState.pattern + '"]').prop('checked', true).change();
 			self.$el.find('[name="time"]').val(currentState.time);
 			self.$el.find('[name="time"]').trigger('blur');
@@ -614,15 +607,38 @@
 					break;
 				case 'yearly':
 					self.$el.find('.js-schedule-yearly [name="yearPattern"][value="' + currentState.selected + '"]').prop('checked', true).change();
-					self.$el.find('.js-schedule-yearly [name="monthSpecificDay"]').multipleSelect('setSelects', currentState.months);
 					self.$el.find('.js-schedule-yearly [name="dayOfMonth"]').val(currentState.days.join()).change();
-					self.$el.find('.js-schedule-yearly [name="dayOfWeek"]').val(currentState.dayOfWeek).change();
 					self.$el.find('.js-schedule-yearly [name="weekOccurrence"]').val(currentState.occurrence).change();
+					self.$el.find('.js-schedule-yearly [name="dayOfWeek"]').val(currentState.dayOfWeek).change();
+
+					if (currentState.selected === 'specificDay') {
+						self.$el.find('.js-schedule-yearly [name="monthSpecificDay"]').multipleSelect('setSelects', currentState.months);
+					}
+
+					if (currentState.selected === 'weekOccurrence') {
+						self.$el.find('.js-schedule-yearly [name="monthOccurrence"]').multipleSelect('setSelects', currentState.months);
+					}
 					break;
 			}
 		};
 
-		function updateFromDom() {
+		function formatArray(arr){
+			if (arr.length === 1){
+				return arr[0];
+			}
+
+			if (arr.length === 2){
+				return arr.join(' and ');
+			}
+
+			if (arr.length > 2){
+				return arr.slice(0, -1).join(', ') + ' and ' + arr.slice(-1);
+			}
+
+			return '';
+		};
+
+		function updateFromDom () {
 			if (disableUiUpdates) {
 				return;
 			}
@@ -635,18 +651,24 @@
 					currentState.selected = self.$el.find('[name="dailyPattern"]:checked').val();
 					break;
 				case 'weekly':
-					currentState.days = self.$el.find('div[name="weeklyDays"] input:checkbox:checked').map(function () { return this.value; }).get();
+					currentState.days = self.$el.find('div[name="weeklyDays"] input:checkbox:checked').map(function () {
+						return this.value;
+					}).get();
 					break;
 				case 'monthly':
 					currentState.selected = self.$el.find('.js-schedule-monthly [name="monthlyPattern"]:checked').val();
 					currentState.occurrence = self.$el.find('.js-schedule-monthly [name="weekOccurrence"]').val();
 					currentState.dayOfWeek = self.$el.find('.js-schedule-monthly [name="dayOfWeek"]').val();
-					currentState.days = self.$el.find('.js-schedule-monthly [name="date"]').val().split(/[\s,]+/);
+					currentState.days = self.$el.find('.js-schedule-monthly [name="date"]').val().split(/[\s,]+/).sort(function (a, b){
+						return a - b;
+					});
 					break;
 				case 'yearly':
 					currentState.selected = self.$el.find('.js-schedule-yearly [name="yearPattern"]:checked').val();
 					currentState.months = self.$el.find(currentState.selected === 'specificDay' ? '.js-schedule-yearly [name="monthSpecificDay"]' : '.js-schedule-yearly [name="monthOccurrence"]').multipleSelect('getSelects');
-					currentState.days = self.$el.find('.js-schedule-yearly [name="dayOfMonth"]').val().split(/[\s,]+/).sort(function (a, b) { return (parseInt(b) < parseInt(a)) });
+					currentState.days = self.$el.find('.js-schedule-yearly [name="dayOfMonth"]').val().split(/[\s,]+/).sort(function (a, b) {
+						return a - b;
+					});
 					currentState.occurrence = self.$el.find('.js-schedule-yearly [name="weekOccurrence"]').val();
 					currentState.dayOfWeek = self.$el.find('.js-schedule-yearly [name="dayOfWeek"]').val();
 					break;
@@ -657,14 +679,14 @@
 			}
 		};
 
-		function hideAll() {
+		function hideAll () {
 			self.$el.find('.js-schedule-daily').hide();
 			self.$el.find('.js-schedule-weekly').hide();
 			self.$el.find('.js-schedule-monthly').hide();
 			self.$el.find('.js-schedule-yearly').hide();
 		};
 
-		function wireEvents() {
+		function wireEvents () {
 			self.$el.find('select[name^="month"]').multipleSelect({
 				width: 230,
 				multiple: true,
@@ -689,32 +711,52 @@
 			});
 
 			//Wire events to auto-change the subtype when fields change
-			self.$el.find('.js-schedule-monthly').find('select[name="dayOfWeek"],select[name="weekOccurrence"]').on('change', function(){
-				if (currentState.selected !== 'week'){
+			self.$el.find('.js-schedule-monthly').find('select[name="dayOfWeek"],select[name="weekOccurrence"]').on('change', function () {
+				if (disableUiUpdates) {
+					return;
+				}
+
+				if (currentState.selected !== 'week') {
 					self.$el.find('[name="monthlyPattern"][value="week"]').prop('checked', true).change();
 				}
 			});
 
-			self.$el.find('.js-schedule-monthly input[name="date"]').on('keypress', function(){
-				if (currentState.selected !== 'date'){
+			self.$el.find('.js-schedule-monthly input[name="date"]').on('keypress', function () {
+				if (disableUiUpdates) {
+					return;
+				}
+
+				if (currentState.selected !== 'date') {
 					self.$el.find('[name="monthlyPattern"][value="date"]').prop('checked', true).change();
 				}
 			});
 
 			self.$el.find('.js-schedule-yearly').find('select[name="monthOccurrence"],select[name="dayOfWeek"],select[name="weekOccurrence"]').on('change', function () {
-				if (currentState.selected !== 'weekOccurrence'){
+				if (disableUiUpdates) {
+					return;
+				}
+
+				if (currentState.selected !== 'weekOccurrence') {
 					self.$el.find('[name="yearPattern"][value="weekOccurrence"]').prop('checked', true).change();
 				}
 			});
 
 			self.$el.find('.js-schedule-yearly').find('select[name="monthSpecificDay"]').on('change', function () {
-				if (currentState.selected !== 'specificDay'){
+				if (disableUiUpdates) {
+					return;
+				}
+
+				if (currentState.selected !== 'specificDay') {
 					self.$el.find('[name="yearPattern"][value="specificDay"]').prop('checked', true).change();
 				}
 			});
 
-			self.$el.find('.js-schedule-yearly input[name="dayOfMonth"]').on('keypress', function(){
-				if (currentState.selected !== 'specificDay'){
+			self.$el.find('.js-schedule-yearly input[name="dayOfMonth"]').on('keypress', function () {
+				if (disableUiUpdates) {
+					return;
+				}
+
+				if (currentState.selected !== 'specificDay') {
 					self.$el.find('[name="yearPattern"][value="specificDay"]').prop('checked', true).change();
 				}
 			});
@@ -725,7 +767,8 @@
 
 			var toTimeString = function (val) {
 				var time = val.trim().match(/^(\d{2})(?::)(\d{2})(?::)?(\d{2})?$/i);
-				if (time === null) return null;
+				if (time === null)
+					return null;
 
 				var hours = Number(time[1]);
 				var minutes = Number(time[2]);
@@ -747,7 +790,9 @@
 				var res;
 
 				if ($.isArray(values)) {
-					res = $(values).map(function (i, val) { return stringsArr[parseInt(val) - 1]; });
+					res = $(values).map(function (i, val) {
+						return stringsArr[parseInt(val) - 1];
+					});
 				} else {
 					res = stringsArr[parseInt(values) - 1];
 				}
@@ -773,28 +818,48 @@
 				return toAltValues(occurrenceList, values);
 			};
 
+			var toEnglishDaySuffix = function (value){
+				if (value.indexOf('-') > 0){
+					var days = $.map(value.split('-'), toEnglishDaySuffix);
+					return days.join('-');
+				}
+
+				var suffix = 'th';
+				switch (value + ''){
+					case '1': case '21': case '31': suffix = 'st'; break;
+					case '2': case '22': 						suffix = 'nd'; break;
+					case '3': case '23':            suffix = 'rd'; break;
+				}
+
+				return value + suffix;
+			};
+
+			var numericSort = function(a, b){
+				return a - b;
+			};
+
 			switch (currentState.pattern) {
 				case 'daily':
 					result = 'Every ' + (currentState.selected === 'weekday' ? 'week' : '') + 'day at ' + timeString;
 					break;
 				case 'weekly':
-					result = 'Every week on ' + toEnglishDays(currentState.days).join(', ') + ' at ' + timeString;
+					result = 'Every week on ' + formatArray(toEnglishDays(currentState.days)) + ' at ' + timeString;
 					break;
 				case 'monthly':
 					result = 'Every month on the ';
 					switch (currentState.selected) {
 						case 'date':
-							result += currentState.days.join(', ') + ' at ' + timeString;
+							result += formatArray($.map(currentState.days, toEnglishDaySuffix)) + ' at ' + timeString;
 							break;
 						case 'week':
 							if (currentState.occurrence !== '') {
 								if (currentState.occurrence === 'L') {
 									result += 'last';
 								} else {
-									result += toEnglishOccurrence(currentState.occurrence.split('#')).join('');
+									result += toEnglishOccurrence(currentState.occurrence.split('#'));
 								}
 
-								result += ' ' + toEnglishDays(currentState.dayOfWeek).join('') + ' at ' + timeString;
+								result += ' ' + toEnglishDays(currentState.dayOfWeek) + ' at ' + timeString;
 							}
 							break;
 						case 'last':
@@ -808,17 +873,17 @@
 					result = 'Every year on ';
 					switch (currentState.selected) {
 						case 'specificDay':
-							result += toEnglishMonths(currentState.months).join(', ') + ' ' + currentState.days.join(', ') + ' at ' + timeString;
+							result += formatArray(toEnglishMonths(currentState.months)) + ' ' + formatArray($.map(currentState.days, toEnglishDaySuffix)) + ' at ' + timeString;
 							break;
 						case 'weekOccurrence':
-							result += 'the '
+							result += 'the ';
 							if (currentState.occurrence === 'L') {
 								result += 'last ';
 							} else {
-								result += toEnglishOccurrence(currentState.occurrence.split('#')).join('') + ' ';
+								result += toEnglishOccurrence(currentState.occurrence.split('#')) + ' ';
 							}
 
-							result += toEnglishDays(currentState.dayOfWeek).join('') + ' of ' + toEnglishMonths(currentState.months).join(', ') + ' at ' + timeString;
+							result += toEnglishDays(currentState.dayOfWeek) + ' of ' + formatArray(toEnglishMonths(currentState.months)) + ' at ' + timeString;
 							break;
 						default:
 							throw new CronError(74, currentState.selected, [currentState.selected]);
@@ -834,10 +899,10 @@
 
 		try {
 			init();
-		}
-		catch (e) {
+		} catch (e) {
 			throw new CronError(80, e, [e.message]);
 		}
 	}
+
 	this.jsCronUI = jsCronUI;
 }).call(this, jQuery);
