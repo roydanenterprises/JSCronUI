@@ -444,7 +444,7 @@ describe("jsCronUI", function(){
             //Act
 
             //Assert
-            expect(function(){ self.$fixture.jsCronUI('getCron', true); }).toThrowError("Invalid days: 47, 99");
+            expect(function(){ self.$fixture.jsCronUI('getCron', true); }).toThrowError("Invalid days: 47, 99.");
         });
     });
 });
