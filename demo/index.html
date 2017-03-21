@@ -18,7 +18,7 @@
     <button class="init">Okay already, get on with it!</button>  Debug <input type="text" id="debug" readonly/> <button class="read">Read Cron</button>
 
     <div id="Schedule" class="c-schedule"></div>
-
+    <div id="Error"></div>
   <script>
 
       $(function(){
@@ -26,8 +26,14 @@
         var $s = $('#Schedule');
 
         function updateDebug(){
-          $('#debug').val($s.jsCronUI('getCron'));
-       }
+          try{
+            $('#Error').text('');
+            $('#debug').val($s.jsCronUI('getCron', true));
+          }
+          catch(e){
+            $('#Error').text(e.message);
+          }
+        }
 
         $('.init').on('click', function(){
           $s.jsCronUI({});
