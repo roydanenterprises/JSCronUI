@@ -643,13 +643,15 @@
 					currentState.selected = self.$el.find('.js-schedule-monthly [name="monthlyPattern"]:checked').val();
 					currentState.occurrence = self.$el.find('.js-schedule-monthly [name="weekOccurrence"]').val();
 					currentState.dayOfWeek = self.$el.find('.js-schedule-monthly [name="dayOfWeek"]').val();
-					currentState.days = self.$el.find('.js-schedule-monthly [name="date"]').val().split(/[\s,]+/);
+					currentState.days = self.$el.find('.js-schedule-monthly [name="date"]').val().split(/[\s,]+/).sort(function (a, b){
+						return a - b;
+					});
 					break;
 				case 'yearly':
 					currentState.selected = self.$el.find('.js-schedule-yearly [name="yearPattern"]:checked').val();
 					currentState.months = self.$el.find(currentState.selected === 'specificDay' ? '.js-schedule-yearly [name="monthSpecificDay"]' : '.js-schedule-yearly [name="monthOccurrence"]').multipleSelect('getSelects');
 					currentState.days = self.$el.find('.js-schedule-yearly [name="dayOfMonth"]').val().split(/[\s,]+/).sort(function (a, b) {
-						return (parseInt(b) < parseInt(a))
+						return a - b;
 					});
 					currentState.occurrence = self.$el.find('.js-schedule-yearly [name="weekOccurrence"]').val();
 					currentState.dayOfWeek = self.$el.find('.js-schedule-yearly [name="dayOfWeek"]').val();
