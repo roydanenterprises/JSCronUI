@@ -47,8 +47,8 @@
 		{ id: 13, message: 'A schedule type is required.' },
 		{ id: 14, message: 'No template found or provided. Please provide a template or include the default template file.' },
 		{ id: 20, message: 'A time is required.' },
-		{ id: 30, message: 'A daily selection is required. %1' },
-		{ id: 40, message: 'A day of week selection is required. %1' },
+		{ id: 30, message: 'Select daily or weekday repetition pattern.' },
+		{ id: 40, message: 'Select one or more days of the week.' },
 		{ id: 50, message: 'A date or day of week selection is required.' },
 		{ id: 51, message: 'Must provide one or more days' },
 		{ id: 52, message: 'Must select a day of the week' },
@@ -335,7 +335,7 @@
 							break;
 						default:
 							if (validate) {
-								throw new CronError(60, currentState.selected, ['']);
+								throw new CronError(61, currentState.selected);
 							}
 					}
 					break;
