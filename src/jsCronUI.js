@@ -576,7 +576,9 @@
             }
 
             var clean = value.replace(regex, '');
-
+            if(clean.length === 0){
+              return;
+            }
             if (value.indexOf('-') >= 0) {
               var pre = clean.substring(0, clean.indexOf('-')),
                 post = clean.substring(clean.indexOf('-') + 1, clean.length);
