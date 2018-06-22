@@ -47,6 +47,7 @@
     { id: 13, message: 'A schedule type is required.' },
     { id: 14, message: 'No template found or provided. Please provide a template or include the default template file.' },
     { id: 20, message: 'A time is required.' },
+    { id: 21, message: 'Must select a number of hours to repeat.' },
     { id: 30, message: 'A daily or weekday repetition pattern selection is required.' },
     { id: 40, message: 'One or more days of the week are required.' },
     { id: 50, message: 'A date or day of week selection is required.' },
@@ -129,6 +130,7 @@
     function resetDom () {
       self.$el.find('input:radio,input:checkbox').prop('checked', false).change();
       self.$el.find('input:text').val('').change();
+      self.$el.find('select[name="hourOccurrence"]').val(1).change();
       hideAll();
       self.$el.find('.c-schedule-options').hide();
       self.$el.find('[name="time"]').attr('data-time', '');
@@ -186,10 +188,16 @@
 
       //reset model to default values
       this.reset();
+      var hourArr = values[2].split('/');
+      currentState.time = pad(hourArr[0], 2) + ':' + pad(values[1], 2);
 
-      currentState.time = pad(values[2], 2) + ':' + pad(values[1], 2);
+      if (values[2] !== '*') {
+        //Expression is hourly
+        currentState.pattern = 'hourly';
+        currentState.occurrence = hourArr[1];
 
-      if (values[4] !== '*') {
+      }
+      else if (values[4] !== '*') {
         //Expression is yearly
         currentState.pattern = 'yearly';
         currentState.months = values[4].split(',');
@@ -271,6 +279,7 @@
 
       disableUiUpdates = true;
       updateDom();
+      //sef.el
       disableUiUpdates = false;
     };
 
@@ -282,7 +291,27 @@
         year = '*',
         dayOfWeek = '?';
 
+        if (currentState.time && currentState.time !== '') {
+          var timeArr = currentState.time.split(':');
+          hour = parseInt(timeArr[0]) + '';
+          minute = parseInt(timeArr[1]) + '';
+        } else {
+          if (validate) {
+            throw new CronError(20);
+          }
+        }
+
       switch (currentState.pattern) {
+        case 'hourly':
+          var hourOccurrence = currentState.occurrence;
+          if (validate && !hourOccurrence === 0) {
+            throw new CronError(21, currentState.pattern);
+          }
+          if(hourOccurrence > 0 && hour !== '*'){
+            hour = hour +"/"+ hourOccurrence;
+          }
+        break;
+
         case 'daily':
           switch (currentState.selected) {
             case 'daily':
@@ -346,15 +375,6 @@
           break;
       }
 
-      if (currentState.time && currentState.time !== '') {
-        var timeArr = currentState.time.split(':');
-        hour = parseInt(timeArr[0]) + '';
-        minute = parseInt(timeArr[1]) + '';
-      } else {
-        if (validate) {
-          throw new CronError(20);
-        }
-      }
 
       var cron = ['0', minute, hour, dayOfMonth, month, dayOfWeek, year]; //Default state = every minute
 
@@ -381,6 +401,11 @@
       }
 
       switch (currentState.pattern) {
+        case 'hourly':
+        if (currentState.occurrence.length === 0 && currentState.occurrence === 0) {
+          throw new CronError(21, currentState.pattern);
+        }
+        break;
         case 'daily':
           switch (currentState.selected) {
             case 'daily':
@@ -603,6 +628,9 @@
       self.$el.find('[name="time"]').trigger('blur');
 
       switch (currentState.pattern) {
+        case 'hourly':
+          self.$el.find('.js-schedule-hourly [name="hourOccurrence"]').val(currentState.occurrence).change();
+        break;
         case 'daily':
           self.$el.find('[name="dailyPattern"][value="' + currentState.selected + '"]').prop('checked', true).change();
           break;
@@ -659,6 +687,9 @@
       currentState.time = self.$el.find('[name="time"]').attr('data-time');
 
       switch (currentState.pattern) {
+        case 'hourly':
+          currentState.occurrence = self.$el.find('[name="hourOccurrence"]').val();
+          break;
         case 'daily':
           currentState.selected = self.$el.find('[name="dailyPattern"]:checked').val();
           break;
@@ -692,6 +723,7 @@
     };
 
     function hideAll () {
+      self.$el.find('.js-schedule-hourly').hide();
       self.$el.find('.js-schedule-daily').hide();
       self.$el.find('.js-schedule-weekly').hide();
       self.$el.find('.js-schedule-monthly').hide();
@@ -813,7 +845,7 @@
 
         return $.makeArray(res);
       }
-
+     
       var toEnglishDays = function (values) {
         var dayList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -849,6 +881,13 @@
       };
 
       switch (currentState.pattern) {
+        case 'hourly':
+          if (currentState.occurrence > 1) {
+              result += "Every "+ currentState.occurrence + " hour(s) starting at " + timeString;
+          }else{
+            result += "Every hour starting at " + timeString;
+          }
+          break;
         case 'daily':
           result = 'Every ' + (currentState.selected === 'weekday' ? 'week' : '') + 'day at ' + timeString;
           break;

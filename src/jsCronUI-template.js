@@ -6,6 +6,12 @@
 				'<ul>' +
 					'<li>' +
 						'<label>' +
+							'<input type="radio" value="hourly" name="ScheduleType" />' +
+							'<span>Hourly</span>' +
+						'</label>' +
+					'</li>' +
+					'<li>' +
+						'<label>' +
 							'<input type="radio" value="daily" name="ScheduleType" />' +
 							'<span>Daily</span>' +
 						'</label>' +
@@ -36,6 +42,17 @@
 						'<div>Time</div>' +
 						'<input type="text" name="time" />' +
 					'</label>' +
+				'</div>' +
+				'<div class="js-schedule-hourly">Repeat every ' + //js-schedule-daily
+					'<select name="hourOccurrence">' +
+							'<option value="1">1</option>' +
+							'<option value="2">2</option>' +
+							'<option value="4">4</option>' +
+							'<option value="6">6</option>' +
+							'<option value="8">8</option>' +
+							'<option value="12">12</option>' +
+						'</select>' + ' hour(s)'
+						+
 				'</div>' +
 				'<div class="js-schedule-daily">Repeat every:' + //js-schedule-daily
 					'<div>' + 
