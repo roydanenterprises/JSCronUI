@@ -98,6 +98,7 @@
     if (settings) {
       self.$bindTo = settings.bindTo || null;
       self.initialValue = settings.initialValue;
+      self.$bindEnglishTo = settings.bindEnglishTo || null;;
     }
 
     var disableUiUpdates = false;
@@ -154,6 +155,10 @@
 
       if (self.$bindTo && self.$bindTo instanceof jQuery && self.initialValue) {
         self.setCron(self.initialValue);
+      }
+
+      if (self.$bindEnglishTo && self.$bindEnglishTo instanceof jQuery && self.initialValue) {
+        self.toEnglishString();
       }
 
       self.$el.find('div input,select').on('change', function () {
@@ -279,7 +284,7 @@
 
       disableUiUpdates = true;
       updateDom();
-      //sef.el
+      
       disableUiUpdates = false;
     };
 
@@ -719,6 +724,9 @@
 
       if (self.$bindTo && self.$bindTo.val() !== self.getCron()) {
         self.$bindTo.val(self.getCron()).change();
+      }
+      if (self.$bindEnglishTo && self.$bindEnglishTo.val() !== self.toEnglishString()) {
+        self.$bindEnglishTo.text(self.toEnglishString()).change();
       }
     };
 
