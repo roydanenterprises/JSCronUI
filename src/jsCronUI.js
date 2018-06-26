@@ -68,11 +68,11 @@
     { id: 80, message: 'Unknown error occurred inside jsCronUI library: %1.' }
   ];
 
-  function CronError(number, additionalData, substitutions) {
-    this.number = number;
-    this.message = errorList.filter(function (error) {
-      return error.id === number;
-    })[0].message;
+	function CronError(number, additionalData, substitutions) {
+		this.number = number;
+		this.message = errorList.filter(function (error) {
+			return error.id === number;
+		})[0].message;
 
     if (substitutions) {
       for (var i = substitutions.length - 1; i >= 0; i--) {
@@ -82,6 +82,7 @@
 
     this.data = additionalData;
     this.stack = (new Error()).stack;
+
   }
 
   CronError.prototype = Object.create(Error.prototype);
@@ -98,7 +99,8 @@
     if (settings) {
       self.$bindTo = settings.bindTo || null;
       self.initialValue = settings.initialValue;
-      self.$bindEnglishTo = settings.bindEnglishTo || null;;
+      self.$bindEnglishTo = settings.bindEnglishTo || null;
+      self.$bindErrorTo = settings.bindErrorTo || null;
     }
 
     var disableUiUpdates = false;
@@ -154,16 +156,45 @@
       wireEvents();
 
       if (self.$bindTo && self.$bindTo instanceof jQuery && self.initialValue) {
-        self.setCron(self.initialValue);
+        if(self.$bindErrorTo instanceof jQuery){
+          try{
+            self.setCron(self.initialValue);
+          }catch(e){
+            self.$bindErrorTo.text(e.message).change();
+          }
+        }else{
+          self.setCron(self.initialValue);
+        }
       }
 
       if (self.$bindEnglishTo && self.$bindEnglishTo instanceof jQuery && self.initialValue) {
-        self.toEnglishString();
+        if(self.$bindErrorTo instanceof jQuery){
+          try{
+            updateFromDom();
+            self.toEnglishString();
+          }catch(e){
+            self.$bindErrorTo.text(e.message).change();
+          }
+        }else{
+          updateFromDom();
+          self.toEnglishString();
+        }
       }
 
       self.$el.find('div input,select').on('change', function () {
-        cleanInputs();
-        updateFromDom();
+        if(self.$bindErrorTo instanceof jQuery){
+          try{
+            cleanInputs();
+            updateFromDom();
+            self.$bindErrorTo.text("").change();
+          }catch(e){
+              self.$bindErrorTo.text(e.message).change();
+          }
+          
+        }else{
+          cleanInputs();
+          updateFromDom();
+        }
       });
     };
 
@@ -196,7 +227,7 @@
       var hourArr = values[2].split('/');
       currentState.time = pad(hourArr[0], 2) + ':' + pad(values[1], 2);
 
-      if (values[2] !== '*') {
+      if (values[2].indexOf('/') > 0 ) {
         //Expression is hourly
         currentState.pattern = 'hourly';
         currentState.occurrence = hourArr[1];
@@ -630,6 +661,7 @@
     function updateDom () {
       self.$el.find('.c-schedule-type input:radio[value="' + currentState.pattern + '"]').prop('checked', true).change();
       self.$el.find('[name="time"]').val(currentState.time);
+      self.$el.find('[name="time"]').attr('data-time',currentState.time);
       self.$el.find('[name="time"]').trigger('blur');
 
       switch (currentState.pattern) {
@@ -725,8 +757,8 @@
       if (self.$bindTo && self.$bindTo.val() !== self.getCron()) {
         self.$bindTo.val(self.getCron()).change();
       }
-      if (self.$bindEnglishTo && self.$bindEnglishTo.val() !== self.toEnglishString()) {
-        self.$bindEnglishTo.text(self.toEnglishString()).change();
+      if (self.$bindEnglishTo && self.$bindTo.val() === self.getCron() && self.$bindEnglishTo.val() !== self.toEnglishString()) {
+         self.$bindEnglishTo.text(self.toEnglishString()).change(); 
       }
     };
 
