@@ -926,7 +926,8 @@
               result += "Every "+ currentState.occurrence + " hour(s) starting at " + timeString;
           }else{
             result += "Every hour starting at " + timeString;
-          }
+              }
+            result += " until end of day (12:00 AM/midnight)";
           break;
         case 'daily':
           result = 'Every ' + (currentState.selected === 'weekday' ? 'week' : '') + 'day at ' + timeString;
