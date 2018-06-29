@@ -47,6 +47,7 @@
     { id: 13, message: 'A schedule type is required.' },
     { id: 14, message: 'No template found or provided. Please provide a template or include the default template file.' },
     { id: 20, message: 'A time is required.' },
+    { id: 21, message: 'Must select a number of hours to repeat.' },
     { id: 30, message: 'A daily or weekday repetition pattern selection is required.' },
     { id: 40, message: 'One or more days of the week are required.' },
     { id: 50, message: 'A date or day of week selection is required.' },
@@ -67,11 +68,11 @@
     { id: 80, message: 'Unknown error occurred inside jsCronUI library: %1.' }
   ];
 
-  function CronError(number, additionalData, substitutions) {
-    this.number = number;
-    this.message = errorList.filter(function (error) {
-      return error.id === number;
-    })[0].message;
+	function CronError(number, additionalData, substitutions) {
+		this.number = number;
+		this.message = errorList.filter(function (error) {
+			return error.id === number;
+		})[0].message;
 
     if (substitutions) {
       for (var i = substitutions.length - 1; i >= 0; i--) {
@@ -81,6 +82,7 @@
 
     this.data = additionalData;
     this.stack = (new Error()).stack;
+
   }
 
   CronError.prototype = Object.create(Error.prototype);
@@ -97,6 +99,8 @@
     if (settings) {
       self.$bindTo = settings.bindTo || null;
       self.initialValue = settings.initialValue;
+      self.$bindEnglishTo = settings.bindEnglishTo || null;
+      self.$bindErrorTo = settings.bindErrorTo || null;
     }
 
     var disableUiUpdates = false;
@@ -129,6 +133,7 @@
     function resetDom () {
       self.$el.find('input:radio,input:checkbox').prop('checked', false).change();
       self.$el.find('input:text').val('').change();
+      self.$el.find('select[name="hourOccurrence"]').val(1).change();
       hideAll();
       self.$el.find('.c-schedule-options').hide();
       self.$el.find('[name="time"]').attr('data-time', '');
@@ -151,12 +156,45 @@
       wireEvents();
 
       if (self.$bindTo && self.$bindTo instanceof jQuery && self.initialValue) {
-        self.setCron(self.initialValue);
+        if(self.$bindErrorTo instanceof jQuery){
+          try{
+            self.setCron(self.initialValue);
+          }catch(e){
+            self.$bindErrorTo.text(e.message).change();
+          }
+        }else{
+          self.setCron(self.initialValue);
+        }
+      }
+
+      if (self.$bindEnglishTo && self.$bindEnglishTo instanceof jQuery && self.initialValue) {
+        if(self.$bindErrorTo instanceof jQuery){
+          try{
+            updateFromDom();
+            self.toEnglishString();
+          }catch(e){
+            self.$bindErrorTo.text(e.message).change();
+          }
+        }else{
+          updateFromDom();
+          self.toEnglishString();
+        }
       }
 
       self.$el.find('div input,select').on('change', function () {
-        cleanInputs();
-        updateFromDom();
+        if(self.$bindErrorTo instanceof jQuery){
+          try{
+            cleanInputs();
+            updateFromDom();
+            self.$bindErrorTo.text("").change();
+          }catch(e){
+              self.$bindErrorTo.text(e.message).change();
+          }
+          
+        }else{
+          cleanInputs();
+          updateFromDom();
+        }
       });
     };
 
@@ -186,10 +224,16 @@
 
       //reset model to default values
       this.reset();
+      var hourArr = values[2].split('/');
+      currentState.time = pad(hourArr[0], 2) + ':' + pad(values[1], 2);
 
-      currentState.time = pad(values[2], 2) + ':' + pad(values[1], 2);
+      if (values[2].indexOf('/') > 0 ) {
+        //Expression is hourly
+        currentState.pattern = 'hourly';
+        currentState.occurrence = hourArr[1];
 
-      if (values[4] !== '*') {
+      }
+      else if (values[4] !== '*') {
         //Expression is yearly
         currentState.pattern = 'yearly';
         currentState.months = values[4].split(',');
@@ -271,6 +315,7 @@
 
       disableUiUpdates = true;
       updateDom();
+      
       disableUiUpdates = false;
     };
 
@@ -282,7 +327,27 @@
         year = '*',
         dayOfWeek = '?';
 
+        if (currentState.time && currentState.time !== '') {
+          var timeArr = currentState.time.split(':');
+          hour = parseInt(timeArr[0]) + '';
+          minute = parseInt(timeArr[1]) + '';
+        } else {
+          if (validate) {
+            throw new CronError(20);
+          }
+        }
+
       switch (currentState.pattern) {
+        case 'hourly':
+          var hourOccurrence = currentState.occurrence;
+          if (validate && !hourOccurrence === 0) {
+            throw new CronError(21, currentState.pattern);
+          }
+          if(hourOccurrence > 0 && hour !== '*'){
+            hour = hour +"/"+ hourOccurrence;
+          }
+        break;
+
         case 'daily':
           switch (currentState.selected) {
             case 'daily':
@@ -346,15 +411,6 @@
           break;
       }
 
-      if (currentState.time && currentState.time !== '') {
-        var timeArr = currentState.time.split(':');
-        hour = parseInt(timeArr[0]) + '';
-        minute = parseInt(timeArr[1]) + '';
-      } else {
-        if (validate) {
-          throw new CronError(20);
-        }
-      }
 
       var cron = ['0', minute, hour, dayOfMonth, month, dayOfWeek, year]; //Default state = every minute
 
@@ -381,6 +437,11 @@
       }
 
       switch (currentState.pattern) {
+        case 'hourly':
+        if (currentState.occurrence.length === 0 && currentState.occurrence === 0) {
+          throw new CronError(21, currentState.pattern);
+        }
+        break;
         case 'daily':
           switch (currentState.selected) {
             case 'daily':
@@ -576,7 +637,9 @@
             }
 
             var clean = value.replace(regex, '');
-
+            if(clean.length === 0){
+              return;
+            }
             if (value.indexOf('-') >= 0) {
               var pre = clean.substring(0, clean.indexOf('-')),
                 post = clean.substring(clean.indexOf('-') + 1, clean.length);
@@ -598,9 +661,13 @@
     function updateDom () {
       self.$el.find('.c-schedule-type input:radio[value="' + currentState.pattern + '"]').prop('checked', true).change();
       self.$el.find('[name="time"]').val(currentState.time);
+      self.$el.find('[name="time"]').attr('data-time',currentState.time);
       self.$el.find('[name="time"]').trigger('blur');
 
       switch (currentState.pattern) {
+        case 'hourly':
+          self.$el.find('.js-schedule-hourly [name="hourOccurrence"]').val(currentState.occurrence).change();
+        break;
         case 'daily':
           self.$el.find('[name="dailyPattern"][value="' + currentState.selected + '"]').prop('checked', true).change();
           break;
@@ -657,6 +724,9 @@
       currentState.time = self.$el.find('[name="time"]').attr('data-time');
 
       switch (currentState.pattern) {
+        case 'hourly':
+          currentState.occurrence = self.$el.find('[name="hourOccurrence"]').val();
+          break;
         case 'daily':
           currentState.selected = self.$el.find('[name="dailyPattern"]:checked').val();
           break;
@@ -687,9 +757,13 @@
       if (self.$bindTo && self.$bindTo.val() !== self.getCron()) {
         self.$bindTo.val(self.getCron()).change();
       }
+      if (self.$bindEnglishTo && self.$bindTo.val() === self.getCron() && self.$bindEnglishTo.val() !== self.toEnglishString()) {
+         self.$bindEnglishTo.text(self.toEnglishString()).change(); 
+      }
     };
 
     function hideAll () {
+      self.$el.find('.js-schedule-hourly').hide();
       self.$el.find('.js-schedule-daily').hide();
       self.$el.find('.js-schedule-weekly').hide();
       self.$el.find('.js-schedule-monthly').hide();
@@ -811,7 +885,7 @@
 
         return $.makeArray(res);
       }
-
+     
       var toEnglishDays = function (values) {
         var dayList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -847,6 +921,14 @@
       };
 
       switch (currentState.pattern) {
+        case 'hourly':
+          if (currentState.occurrence > 1) {
+              result += "Every "+ currentState.occurrence + " hour(s) starting at " + timeString;
+          }else{
+            result += "Every hour starting at " + timeString;
+              }
+            result += " until end of day (12:00 AM/midnight)";
+          break;
         case 'daily':
           result = 'Every ' + (currentState.selected === 'weekday' ? 'week' : '') + 'day at ' + timeString;
           break;
